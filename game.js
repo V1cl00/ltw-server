@@ -13,7 +13,7 @@ const TT={
  frost:{n:'Frost',c:'#6cc8f0',ico:'❄',cost:20,b:{dmg:5,rng:2.6,rate:.8,dt:'magic',spd:10,slow:.35,slowDur:2},up:[
   [{n:'Eiskälte',d:'+10% Verlangsamung',cost:25,m:{slow:.1}},{n:'Permafrost',d:'+10% Verl., +1,5s Dauer',cost:45,m:{slow:.1,slowDur:1.5}},{n:'Eissplitter',d:'Flächenfrost, +15 Schaden',cost:100,m:{splash:1,dmg:15}}],
   [{n:'Frostbiss',d:'+6 Schaden',cost:25,m:{dmg:6}},{n:'Kältesinn',d:'Erkennt Tarnung',cost:35,m:{camo:1}},{n:'Gletscher',d:'+1 Reichweite, 40% schneller',cost:90,m:{rng:1,rateMul:.6}}]]},
- gift:{n:'Gift',c:'#7bd65a',ico:'☠',cost:20,b:{dmg:4,rng:2.8,rate:1,dt:'poison',spd:9,dot:14,dotDur:3},up:[
+ gift:{n:'Dornen',c:'#7bd65a',ico:'🌿',cost:20,b:{dmg:4,rng:2.8,rate:1,dt:'poison',spd:9,dot:14,dotDur:3},up:[
   [{n:'Spürgas',d:'Erkennt Tarnung',cost:20,m:{camo:1}},{n:'Säure',d:'+8 Gift/s, ätzt Rüstung',cost:35,m:{dot:8,ap:1}},{n:'Seuche',d:'+25 Gift/s, Flächenwirkung',cost:120,m:{dot:25,splash:1}}],
   [{n:'Starkes Gift',d:'+6 Gift/s',cost:25,m:{dot:6}},{n:'Lange Wirkung',d:'+2s Giftdauer',cost:35,m:{dotDur:2}},{n:'Nervengift',d:'+10 Gift/s, verlangsamt 20%',cost:90,m:{dot:10,slow:.2,slowDur:2}}]]},
  element:{n:'Element',c:'#e070ff',ico:'✦',cost:40,max:ELEM_MAX_T,b:{dmg:14,rng:3,rate:1,dt:'magic',spd:12},up:[[2,3,4,5].map((l,i)=>({n:'Elementstufe '+l,d:'Element-Effekt stärker'+(l===5?' + Stufe-5-Bonus':''),cost:[25,45,70,110][i],m:{}})),[]]},
@@ -48,8 +48,8 @@ const RACE={
  untote:{mark:'eyes',n:'Astralwanderer',locked:1,c:'#6B3FA0',c2:'#7CFF4F',acc:'#D9D3C1',d:'Kontrolle & Wirtschaft',
   t:{u_ghul:{n:'Ghul-Grube',ico:'🦴',cost:10,vis:'pfeil',role:'DMG',d:'Ziel nimmt +15 % Schaden',b:{dmg:8,rng:2.6,rate:.85,dt:'phys',spd:12,amp:.15}},
    u_kessel:{n:'Seuchenkessel',ico:'☠',cost:20,vis:'gift',role:'DMG',d:'Giftwolke 12/s in 2 Feldern',b:{dmg:2,rng:2.4,rate:1.2,dt:'poison',spd:9,splash:2,dot:12,dotDur:3}},
-   u_gruft:{n:'Frostgruft',ico:'❄',cost:22,vis:'frost',role:'SLOW',d:'30 % Slow, Fläche',b:{dmg:4,rng:2.6,rate:1,dt:'magic',spd:10,splash:1.2,slow:.3,slowDur:2}},
-   u_nekro:{n:'Totenbeschwörer',ico:'💀',cost:28,vis:'blitz',role:'ECO',d:'Kills +2 Gold',b:{dmg:7,rng:2.8,rate:.9,dt:'magic',spd:12,killGold:2}},
+   u_gruft:{n:'Frostgruft',ico:'❄',cost:22,vis:'frost',role:'SLOW',d:'30 % Verlangsamung, Fläche',b:{dmg:4,rng:2.6,rate:1,dt:'magic',spd:10,splash:1.2,slow:.3,slowDur:2}},
+   u_nekro:{n:'Totenbeschwörer',ico:'💀',cost:28,vis:'blitz',role:'ECO',d:'Verwandlungen +2 Gold',b:{dmg:7,rng:2.8,rate:.9,dt:'magic',spd:12,killGold:2}},
    u_banshee:{n:'Banshee-Turm',ico:'👻',cost:26,vis:'frost',role:'CAMO',d:'Erkennt Tarnung, trifft Luft',b:{dmg:18,rng:3,rate:1,dt:'magic',spd:12,camo:1}}},
   unit:{id:'lich',n:'Lich-Schatten',c:'#9a6aff',cost:90,inc:11,hp:600,sp:1.3,unlock:200,camo:1,spawn:3,L:2,cd:30},
   hero:{n:'Neyra',c:'#9fe8ff',ab:['frostnova','seelenernte']}},
@@ -58,7 +58,7 @@ const RACE={
    e_brunnen:{n:'Mondbrunnen',ico:'⛲',cost:20,vis:'aura',role:'SUP',d:'+1 Reichweite in 2 Feldern',b:{dmg:0,rng:2,rate:99,noAtk:1,aura:{rng:1,r:2}}},
    e_baum:{n:'Uralter Baum',ico:'🌳',cost:24,vis:'gift',role:'SLOW',d:'Wurzeln: 0,8 s Stun, 2 Ziele',b:{dmg:8,rng:2.6,rate:1.8,dt:'magic',spd:9,freeze:1,freezeDur:.8,multi:2}},
    e_eule:{n:'Eulenwacht',ico:'🦉',cost:16,vis:'pfeil',role:'CAMO',d:'Tarnsicht für Türme in 4 Feldern',b:{dmg:7,rng:4,rate:.8,dt:'phys',spd:14,camo:1,aura:{camo:1,r:4}}},
-   e_dryade:{n:'Dryadenhain',ico:'🍃',cost:30,vis:'frost',role:'AA',d:'+100 % vs. Luft, 30 % Slow',b:{dmg:36,rng:3.2,rate:1.3,dt:'magic',spd:13,airMul:1,slow:.3,slowDur:1.5}}},
+   e_dryade:{n:'Dryadenhain',ico:'🍃',cost:30,vis:'frost',role:'AA',d:'+100 % vs. Luft, 30 % Verlangsamung',b:{dmg:36,rng:3.2,rate:1.3,dt:'magic',spd:13,airMul:1,slow:.3,slowDur:1.5}}},
   unit:{id:'wandler',n:'Gestaltwandler',c:'#4FE3D0',cost:85,inc:10,hp:650,sp:1.3,unlock:200,morph:1,L:2,cd:30},
   hero:{n:'Pip',c:'#CFE3FF',ab:['sternenregen','mondlicht']}},
  zwerge:{mark:'gear',n:'Hüter',locked:1,c:'#5DBB4A',c2:'#FFE9F0',acc:'#8A6A3A',d:'Rette die Ängste! Viel Gold und starke Bremsen. Jede Angst wird zu Licht und wächst im Garten.',xform:1,
@@ -132,7 +132,7 @@ function pickRace(p,rk){if(!RACE[rk])return false;p.race=rk;p.hero=mkHero(p);ret
 const MT={
  blitzmeister:{n:'Blitzmeister',c:'#d0a0ff',d:'Kettenblitz-Aura: trifft periodisch mehrere Gegner (ab Stufe 3 auch getarnte).',cost:[60,60,90,130,180,250]},
  frostmeister:{n:'Frostmeister',c:'#9ef',d:'Globaler Frostpuls verlangsamt alle Gegner der Bahn.',cost:[60,60,90,130,180,250]},
- goldmeister:{n:'Goldmeister',c:'#fd5',d:'Bonus-Einkommen und Extragold pro Kill.',cost:[60,60,90,130,180,250]}};
+ goldmeister:{n:'Goldmeister',c:'#fd5',d:'Bonus-Einkommen und Extragold pro Verwandlung.',cost:[60,60,90,130,180,250]}};
 const TGT=['first','last','strong','close'],TGTN={first:'Erster',last:'Letzter',strong:'Stärkster',close:'Nächster'};
 function mStats(k,l){if(k==='blitzmeister')return{rate:2.2-l*.25,targets:1+l,dmg:12*l*l+8,rng:4+l*.4,camo:l>=3};
  if(k==='frostmeister')return{rate:6-l*.6,slow:.2+l*.08,dur:1.5+l*.5,dmg:5*l};return{inc:l*3,kill:l*.15};}
@@ -154,26 +154,26 @@ const ELEM={
  erde:{n:'Erde',ico:'🪨',c:'#b08850',role:'DMG',d:'Splash +12 in 1 Feld, nur Boden',m:{splash:1,dmg:12,ground:1},sc:['dmg'],l5:{freeze:.5,freezeDur:.5}},
  luft:{n:'Luft',ico:'🌪',c:'#c8f0ff',role:'AA',d:'Trifft Luft, +50 % vs. Flieger',m:{air:1,airMul:.5},sc:['airMul'],l5:{multi:3}},
  blitz:{n:'Blitz',ico:'⚡',c:'#fff35c',role:'DMG',d:'Kette auf 3 Ziele',m:{chain:3},sc:['dmg'],l5:{chain:2}},
- eis:{n:'Eis',ico:'❄',c:'#9fe8ff',role:'SLOW',d:'30 % Slow 1,5 s, 10 % Einfrieren',m:{slow:.3,slowDur:1.5,freeze:.1,freezeDur:.8},sc:[],l5:{freeze:.15}},
+ eis:{n:'Eis',ico:'❄',c:'#9fe8ff',role:'SLOW',d:'30 % Verlangsamung 1,5 s, 10 % Einfrieren',m:{slow:.3,slowDur:1.5,freeze:.1,freezeDur:.8},sc:[],l5:{freeze:.15}},
  licht:{n:'Licht',ico:'☀',c:'#fff4b0',role:'CAMO',d:'Erkennt Tarnung, +20 % vs. Getarnte',m:{camo:1,camoMul:.2},sc:['camoMul'],l5:{aura:{camo:1,r:4}}},
- schatten:{n:'Schatten',ico:'🌑',c:'#9a6aff',role:'ECO',d:'+1 Gold/Kill, durchdringt Rüstung',m:{killGold:1,ap:1},sc:['killGold'],l5:{killGold:3}}};
+ schatten:{n:'Schatten',ico:'🌑',c:'#9a6aff',role:'ECO',d:'+1 Gold pro Verwandlung, durchdringt Rüstung',m:{killGold:1,ap:1},sc:['killGold'],l5:{killGold:3}}};
 const COMBO={// Schlüssel: zwei Basis-Elemente alphabetisch mit '+'
- 'feuer+wasser':{n:'Dampf',ico:'♨',c:'#e0e0e0',role:'SLOW',d:'Dampfwolke 1,5 Felder: 25 % Slow + 10/s',m:{splash:1.5,slow:.25,slowDur:2,dot:10,dotDur:2},sc:['dot']},
+ 'feuer+wasser':{n:'Dampf',ico:'♨',c:'#e0e0e0',role:'SLOW',d:'Dampfwolke 1,5 Felder: 25 % Verlangsamung + 10/s',m:{splash:1.5,slow:.25,slowDur:2,dot:10,dotDur:2},sc:['dot']},
  'erde+feuer':{n:'Magma',ico:'🌋',c:'#ff4a10',role:'DMG',d:'Lava 25/s am Ziel, Splash, nur Boden',m:{splash:1,dot:25,dotDur:4,ground:1},sc:['dot']},
  'blitz+feuer':{n:'Plasma',ico:'🟣',c:'#ff5cf0',role:'DMG',d:'Strahl +60 Schaden, durchschlägt 3',m:{dmg:60,pierce:3,rateMul:1.3},sc:['dmg']},
  'feuer+licht':{n:'Sonne',ico:'🌞',c:'#ffd040',role:'CAMO',d:'Erkennt Tarnung, Flare +40 in 2 Feldern',m:{camo:1,splash:2,dmg:40,rateMul:1.8},sc:['dmg']},
  'feuer+schatten':{n:'Höllenfeuer',ico:'😈',c:'#c02040',role:'DMG',d:'Brand 15/s, ignoriert Rüstung',m:{dot:15,dotDur:4,ap:1},sc:['dot']},
  'blitz+wasser':{n:'Gewitterflut',ico:'🌊',c:'#4ac0ff',role:'DMG',d:'Kette 4 Ziele, +35 Schaden',m:{chain:4,dmg:35},sc:['dmg']},
- 'eis+wasser':{n:'Gletscher',ico:'🧊',c:'#b0f0ff',role:'SLOW',d:'35 % Slow in 1,5 Feldern',m:{splash:1.5,slow:.35,slowDur:2},sc:[]},
+ 'eis+wasser':{n:'Gletscher',ico:'🧊',c:'#b0f0ff',role:'SLOW',d:'35 % Verlangsamung in 1,5 Feldern',m:{splash:1.5,slow:.35,slowDur:2},sc:[]},
  'licht+wasser':{n:'Quelle',ico:'⛲',c:'#80e0ff',role:'SUP',d:'Türme in 2 Feldern +15 % Angriffstempo',m:{aura:{rateMul:.87,r:2}},sc:[]},
- 'schatten+wasser':{n:'Gift',ico:'☠',c:'#7bd65a',role:'DMG',d:'Gift 12/s für 6 s',m:{dot:12,dotDur:6,ap:1},sc:['dot']},
- 'erde+licht':{n:'Kristall',ico:'💎',c:'#c0a0ff',role:'ECO',d:'+2 Gold/Kill, +1 Gold/s passiv',m:{killGold:2,gps:1},sc:['killGold','gps']},
+ 'schatten+wasser':{n:'Dornennebel',ico:'🌿',c:'#7bd65a',role:'DMG',d:'Dornen 12/s für 6 s',m:{dot:12,dotDur:6,ap:1},sc:['dot']},
+ 'erde+licht':{n:'Kristall',ico:'💎',c:'#c0a0ff',role:'ECO',d:'+2 Gold pro Verwandlung, +1 Gold/s passiv',m:{killGold:2,gps:1},sc:['killGold','gps']},
  'blitz+luft':{n:'Gewitter',ico:'⛈',c:'#d0d8ff',role:'AA',d:'+45 Schaden, trifft Luft, 2 Ziele',m:{air:1,dmg:45,multi:2,airMul:.3},sc:['dmg']},
  'licht+luft':{n:'Aurora',ico:'🌈',c:'#a0ffd0',role:'SUP',d:'Türme in 2,5 Feldern +1 Reichweite & Tarnsicht',m:{aura:{rng:1,camo:1,r:2.5}},sc:[]},
- 'blitz+eis':{n:'Frostfunke',ico:'✳',c:'#c0f0ff',role:'SLOW',d:'Kette 3, +25 Schaden, 15 % Slow',m:{chain:3,dmg:25,slow:.15,slowDur:2},sc:['dmg']},
+ 'blitz+eis':{n:'Frostfunke',ico:'✳',c:'#c0f0ff',role:'SLOW',d:'Kette 3, +25 Schaden, 15 % Verlangsamung',m:{chain:3,dmg:25,slow:.15,slowDur:2},sc:['dmg']},
  'blitz+schatten':{n:'Nachtblitz',ico:'🌩',c:'#8060ff',role:'DMG',d:'15 % Krit ×3, Krit betäubt 0,4 s',m:{crit:.15,freezeDur:.4},sc:['crit']},
  'licht+schatten':{n:'Zwielicht',ico:'🌗',c:'#d0a0ff',role:'SUP',d:'Ziel nimmt +20 % Schaden (4 s), Tarnsicht',m:{amp:.2,camo:1},sc:['amp']},
- 'eis+schatten':{n:'Seelenfrost',ico:'👻',c:'#a0c0ff',role:'ECO',d:'25 % Slow, +3 Gold/Kill',m:{slow:.25,slowDur:2,killGold:3},sc:['killGold']}};
+ 'eis+schatten':{n:'Seelenfrost',ico:'👻',c:'#a0c0ff',role:'ECO',d:'25 % Verlangsamung, +3 Gold pro Verwandlung',m:{slow:.25,slowDur:2,killGold:3},sc:['killGold']}};
 const comboKey=(a,b)=>[a,b].sort().join('+');
 function elemDef(t){const el=t.el||[];if(!el.length)return null;const tl=1+((t.up&&t.up[0])||0);if(el.length===1)return{...ELEM[el[0].e],lv:tl,base:1};
  const C=COMBO[comboKey(el[0].e,el[1].e)];return C?{...C,lv:tl}:null;}
@@ -226,8 +226,8 @@ function pickMaster(p,k){if(p.master)return false;p.master=k;return true;}
 function placeMaster(p,x,y){if(!p.master||p.masterT)return null;const t=build(p,'master',x,y,true);if(t){p.masterT=t;p.mLvl=1;}return t;}
 function mUp(p){if(!p.masterT||p.mLvl>=5)return false;const c=MT[p.master].cost[p.mLvl];if(p.gold<c)return false;p.gold-=c;p.mLvl++;return true;}
 // ---- Minuten-Events (jede volle Minute, 5 s Ankündigung) ----
-const EVT={rabatt:{n:'Sende-Rabatt',ico:'🏷',d:'Sendeeinheiten −30 % Kosten',dur:20},goldrausch:{n:'Goldrausch',ico:'💰',d:'Kill-Kopfgeld ×2, Goldmine ×2',dur:15},
- boost:{n:'Einkommens-Boost',ico:'📈',d:'Nächster Einkommens-Tick ×2',dur:0},blutmond:{n:'Blutmond',ico:'🩸',d:'Einheiten +25 % LP, +15 % Tempo, Lebensraub ×2, Kopfgeld +50 %',dur:30},
+const EVT={rabatt:{n:'Sende-Rabatt',ico:'🏷',d:'Sendeeinheiten −30 % Kosten',dur:20},goldrausch:{n:'Goldrausch',ico:'💰',d:'Lichtlohn ×2, Goldmine ×2',dur:15},
+ boost:{n:'Einkommens-Boost',ico:'📈',d:'Nächster Einkommens-Tick ×2',dur:0},blutmond:{n:'Schattenmond',ico:'🌘',d:'Ängste +25 % LP, +15 % Tempo, doppelter Mutraub, Lichtlohn +50 %',dur:30},
  frost:{n:'Frostzeit',ico:'❄',d:'Alle Einheiten −30 % Tempo',dur:12},turbo:{n:'Turbo',ico:'⏩',d:'Spieltempo ×1,5',dur:20}};
 const evOn=(G,k)=>G.evt&&G.evt.k===k&&G.et<G.evt.end;
 function stepEvents(G,rdt){G.et=(G.et||0)+rdt;const nextMin=(Math.floor(G.et/60)+1)*60;
@@ -337,7 +337,7 @@ function aiRunes(G,p,danger,needAir,needCamo){const R=Math.random;if(R()>(danger
  if(el.length&&canUp(t,0)&&p.gold>=upCost(t,0)+15&&R()<.5){upgrade(p,t,0);return;}if(!e)return;
  p.runes=p.runes||{};const need=(p.runes[e]?0:RUNE_COST);if(!(p.runes[e]>0)&&p.gold<need+5)return;if(!(p.runes[e]>0)&&!buyRune(p,e))return;const c=canSlot(p,t,e);if(c)slotRune(p,t,e);}
 // KI-Platzierung: Schadenstürme dorthin, wo sie die meisten Pfadzellen abdecken (Kurven/U-Turns, mittleres/spätes Labyrinth).
-// Kandidaten = vorhandene Mauern (werden ersetzt) + geplante Mauerzellen -> Labyrinth bleibt intakt. Splash bevorzugt Kurven, Slow früh im Pfad.
+// Kandidaten = vorhandene Mauern (werden ersetzt) + geplante Mauerzellen -> Labyrinth bleibt intakt. Splash bevorzugt Kurven, Verlangsamung früh im Pfad.
 function spotScore(p,ty,x,y,path,turn){const r=ty==='element'?3:TT[ty].b.rng||2.5,L=path.length||1,slow=ty==='frost',splash=ty==='kanone';let sc=0;
  path.forEach(([px,py],i)=>{if(Math.hypot(px-x,py-y)>r)return;let w=1;if(turn[i])w+=splash?1.5:.4;const f=i/L;w*=slow?1.3-.7*f:.7+.6*Math.min(1,f*1.6);sc+=w;});
  for(const t of p.towers)if(!TT[t.type].wall&&Math.hypot(t.x-x,t.y-y)<1.5)sc*=.85;return sc;}
