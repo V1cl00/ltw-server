@@ -72,7 +72,7 @@ const RACE={
 for(const[rk,R]of Object.entries(RACE))for(const[k,T]of Object.entries(R.t)){T.race=rk;T.c=R.c;T.gen=1;T.up=genUp(T.cost,T.b.camo?{n:'Verstärkt',d:'+0,3 Reichweite, 15 % schneller',cost:Math.round(T.cost*1.35),m:{rng:.3,rateMul:.85}}:null);
  if(T.b.noAtk)T.up=[[{n:'Ausbau',d:'Effekt verstärkt',cost:Math.round(T.cost*1.2),m:{auraUp:1}}],[]];TT[k]=T;}
 const raceTowers=rk=>Object.keys(RACE[rk].t);
-const ECO={incMin:.5,incDim:450,incHp:3600,startGold:70,bounty:1,hpMul:.8,sdStart:840,sdLen:220};
+const ECO={incMin:.05,incDim:170,incHp:2400,startGold:70,bounty:1,hpMul:.8,sdStart:540,sdLen:200};
 const CT=[
  {id:'laeufer',n:'Läufer',c:'#ddd',cost:5,inc:1,hp:32,sp:1.6,gold:1,unlock:5},
  {id:'flitzer',n:'Flitzer',c:'#ffe066',cost:10,inc:2,hp:55,sp:2.8,gold:1,unlock:60},
@@ -82,8 +82,8 @@ const CT=[
  {id:'heiler',n:'Heiler',c:'#f6a',cost:80,inc:10,hp:620,sp:1.3,gold:6,unlock:180,heal:1},
  {id:'boss',n:'Koloss',c:'#e33',cost:150,inc:18,hp:2800,sp:.9,gold:12,unlock:240,boss:1,armor:1}];
 // v27: sanfte Sättigung statt Absturz auf +1 (alt: Faktor 1-inc/400, Boden 20 %, gerundet -> ab ~300 Einkommen gab jede Einheit +1)
-function incSat(p){return Math.max(ECO.incMin,1/(1+Math.max(0,p.income-60)/ECO.incDim));}
-function incGain(p,ct){return Math.max(1,Math.ceil(ct.inc*incSat(p)-1e-9));}
+function incSat(p){const x=Math.max(0,p.income-80)/ECO.incDim;return Math.max(ECO.incMin,1/(1+x*x));}
+function incGain(p,ct){const s=incSat(p);return s>=.999?ct.inc:Math.max(.1,Math.round(ct.inc*s*10)/10);}
 // ================= Spezialeinheiten (Doc §3.2) & Rasseneinheiten =================
 // Bounty-Regel: Kopfgeld = Einkommensgewinn des Senders (bounty = ig). Cooldowns pro Sender. L = gestohlene Leben bei Leak.
 const SPECIAL=[
@@ -140,7 +140,7 @@ function mStats(k,l){if(k==='blitzmeister')return{rate:2.2-l*.25,targets:1+l,dmg
  if(k==='frostmeister')return{rate:6-l*.6,slow:.2+l*.08,dur:1.5+l*.5,dmg:5*l};return{inc:l*3,kill:l*.15};}
 function tStats(t,noBuff){const T=TT[t.type],s=Object.assign({camo:0,ap:0,air:0,splash:0,slow:0,dot:0,chain:0,pierce:1,slowDur:2,dotDur:3},T.b);
  for(let p=0;p<2;p++)for(let i=0;i<t.up[p];i++){const m=T.up[p][i].m;for(const k in m){if(k==='rateMul')s.rate*=m[k];else if(k==='camo'||k==='ap'||k==='air')s[k]=1;else s[k]=(s[k]||0)+m[k];}}
- s.dmg*=T.race==='orks'?1.16:.9;/*v27-Balance: Verteidigung -10 %, Glutriesen-Ausgleich*/if(s.dmgPct){s.dmg*=1+s.dmgPct;}{const L=(t.lv||1)-1;if(L>0){s.dmg*=1+.1*L+(L>=4?.1:0)+(L>=9?.2:0);s.rate*=Math.pow(.98,L);s.rng+=.05*L;}}if(s.auraUp&&s.aura){const a=s.aura={...s.aura};if(a.rateMul)a.rateMul-=.08;if(a.dmgMul)a.dmgMul+=.1;if(a.rng)a.rng+=.5;}if(s.auraUp&&s.gps)s.gps+=1;
+ s.dmg*=T.race==='orks'?1.01:.9;/*v27-Balance: Verteidigung -10 %, Glutriesen-Ausgleich*/if(s.dmgPct){s.dmg*=1+s.dmgPct;}{const L=(t.lv||1)-1;if(L>0){s.dmg*=1+.1*L+(L>=4?.1:0)+(L>=9?.2:0);s.rate*=Math.pow(.98,L);s.rng+=.05*L;}}if(s.auraUp&&s.aura){const a=s.aura={...s.aura};if(a.rateMul)a.rateMul-=.08;if(a.dmgMul)a.dmgMul+=.1;if(a.rng)a.rng+=.5;}if(s.auraUp&&s.gps)s.gps+=1;
  if(t.type==='element')elemStats(t,s);
  if(!noBuff&&t.buff){s.rate*=t.buff.rateMul;s.rng+=t.buff.rng;if(t.buff.camo)s.camo=1;if(t.buff.dmgMul)s.dmg*=t.buff.dmgMul;}
  return s;}
@@ -229,6 +229,9 @@ const LV_MAX=10,LV_AUTO={3:0,5:0,7:1,9:1,10:0};
 function canLv(t){return !!t&&!t.master&&!TT[t.type]?.wall&&(t.lv||1)<LV_MAX;}
 function lvCost(t){const T=TT[t.type];return Math.ceil(Math.max(8,T.cost)*.6*Math.pow(1.22,(t.lv||1)-1));}
 function lvUp(p,t){if(!canLv(t))return false;const c=lvCost(t);if(p.gold<c)return false;p.gold-=c;t.spent+=c;t.lv=(t.lv||1)+1;t.upT=p.now||0;const pa=LV_AUTO[t.lv];if(pa!=null){if(canUp(t,pa))t.up[pa]++;else if(canUp(t,1-pa))t.up[1-pa]++;}return true;}
+// v29: Tempelsegen – Gold-Senke fürs Spätspiel: +3 ❤, Preis steigt (120·1,35^n), max. 8×
+const BLESS={max:6,cost:n=>Math.round(150*Math.pow(1.4,n)),lives:2,cap:60};
+function bless(p){const n=p.bless||0;if(n>=BLESS.max||p.dead||p.lives>=BLESS.cap)return false;const c=BLESS.cost(n);if(p.gold<c)return false;p.gold-=c;p.bless=n+1;p.lives=Math.min(BLESS.cap,p.lives+BLESS.lives);return true;}
 const UNDO_T=10;function sellVal(p,t){return Math.floor(t.spent*((p.now||0)-(t.born||0)<UNDO_T&&(t.lv||1)===1?1:.75));}
 function sell(p,t){if(t.master)return;p.gold+=sellVal(p,t);p.grid[t.y][t.x]=null;p.towers.splice(p.towers.indexOf(t),1);p.dist=bfs(p.grid);}
 function pickMaster(p,k){if(p.master)return false;p.master=k;return true;}
@@ -255,7 +258,7 @@ function stepMine(G,p,dt){const m=p.mine,L=MINE[m.lvl],pi=G.p.indexOf(p);m.ph=m.
  for(let i=0;i<m.w;i++){const a=m.ph[i];m.ph[i]+=dt/L.trip;if(a<.5&&m.ph[i]>=.5){const g=Math.max(1,Math.round(L.y*L.trip*(evOn(G,'goldrausch')?2:1)));p.gold+=g;G.ev.push({k:'minegold',pi,g});}if(m.ph[i]>=1)m.ph[i]-=1;}}
 function sendTarget(G,from){const N=G.p.length;for(let k=1;k<N;k++){const i=(from+k)%N;if(!G.p[i].dead)return i;}return(from+1)%N;}
 function sendCreep(G,from,id){const ct=CT.find(c=>c.id===id)||CT[0],p=G.p[from],o=G.p[sendTarget(G,from)];const cost=creepCost(G,ct);if(!ct||p.gold<cost||G.t<ct.unlock||!ctAvail(p,ct)||sendCd(G,p,ct)>0)return false;if(ct.cd)(p.sendCd=p.sendCd||{})[ct.id]=G.t+ct.cd;
- p.gold-=cost;const ig=incGain(p,ct);p.income+=ig;p.lastInc=ig;const sc=ECO.hpMul*(1+p.income/ECO.incHp)*(1+Math.pow(Math.max(0,G.t-ECO.sdStart)/ECO.sdLen,2))*(evOn(G,'blutmond')?1.25:1);
+ p.gold-=cost;const ig=incGain(p,ct);p.income=Math.round((p.income+ig)*10)/10;p.lastInc=ig;const sc=ECO.hpMul*(1+p.income/ECO.incHp)*(1+Math.pow(Math.max(0,G.t-ECO.sdStart)/ECO.sdLen,2))*(evOn(G,'blutmond')?1.25:1);
  (o.inLog=o.inLog||[]).push([G.t,ct.hp*sc]);(p.sendLog=p.sendLog||[]).push([G.t,ct.cost]);o.creeps.push({id:(G.cid=(G.cid||0)+1),ct,owner:from,bounty:ig,x:SPAWN.x+.5+(Math.random()-.5)*.3,y:.5,hp:ct.hp*sc,max:ct.hp*sc,fly:ct.fly,camo:ct.camo,armor:ct.armor,slow:0,slowT:0,dot:0,dotT:0,dotAp:0});return ig;}
 function newGame(n){const G={diff:1,et:0,evt:null,nextEvt:null,p:Array.from({length:Math.max(2,Math.min(4,n||2))},(_,i)=>mkPlayer(i?1:0)),t:0,tick:TICK,fx:[],ev:[],over:null};for(const p of G.p)p.dist=bfs(p.grid);return G;}
 const cdist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -322,7 +325,7 @@ function step(G,dt){if(G.over)return;for(const p of G.p)p.now=G.t;if(G.ev.length
      G.fx.push({k:'burst',pi,x:c.x,y:c.y,r:.6+.15*ch,t:.5,c:'#FFF6E0'});G.ev.push({k:'transform',pi,x:c.x,y:c.y,g,chain:ch});if(ch>=5&&!p.stormOn){p.stormOn=1;G.ev.push({k:'lichtsturm',pi});G.fx.push({k:'pulse',pi,t:.6,c:'gold'});}if(ch<5)p.stormOn=0;
      for(let j=0;j<7+2*ch;j++){const a=Math.random()*7,v=1+Math.random()*2;G.fx.push({k:'part',pi,x:c.x,y:c.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1.2,t:.6,c:j%2?'#F2B233':'#FFF6E0'});}}
     else{G.ev.push({k:'kill',pi,x:c.x,y:c.y,g});for(let j=0;j<7;j++){const a=Math.random()*7,v=1+Math.random()*2;G.fx.push({k:'part',pi,x:c.x,y:c.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,t:.4,c:c.ct.c});}}continue;}
-   if(stepCreep(G,p,c,dt)){p.creeps.splice(i,1);const X=(c.ct.L??(c.ct.boss?5:1))*(evOn(G,'blutmond')?2:1),ow=c.owner??1-pi;if(c.ct.thief){const st=Math.min(60,Math.floor(p.gold*.1));p.gold-=st;G.p[ow].gold+=st;G.fx.push({k:'steal',pi:ow,t:1.2,txt:'+'+st+' 💰 Dieb',x:5.5,y:ROWS-1.5});G.ev.push({k:'thief',pi:ow,g:st});}p.lives-=X;if(!G.p[ow].dead){const S=G.p[ow],gain=S.lives-p.lives>12?0:Math.max(0,Math.min(X,40-S.lives));S.lives+=gain;}if(G.firstSteal==null){G.firstSteal=G.t;G.fsBy=ow;}G.p[ow].stolen=(G.p[ow].stolen||0)+X;(p.leakLog=p.leakLog||[]).push(G.t);G.fx.push({k:'leak',pi,t:.4});G.fx.push({k:'steal',pi:ow,t:1.2,txt:'+'+X+' ❤',x:5.5,y:ROWS-1.5});G.ev.push({k:'leak',pi,n:X});G.ev.push({k:'steal',pi:ow,n:X});}}});
+   if(stepCreep(G,p,c,dt)){p.creeps.splice(i,1);const X=(c.ct.L??(c.ct.boss?5:1))*(evOn(G,'blutmond')?2:1),ow=c.owner??1-pi;if(c.ct.thief){const st=Math.min(60,Math.floor(p.gold*.1));p.gold-=st;G.p[ow].gold+=st;G.fx.push({k:'steal',pi:ow,t:1.2,txt:'+'+st+' 💰 Dieb',x:5.5,y:ROWS-1.5});G.ev.push({k:'thief',pi:ow,g:st});}p.lives-=X;if(!G.p[ow].dead){const S=G.p[ow],gain=S.lives>=p.lives?0:Math.max(0,Math.min(X,p.lives-S.lives,52-S.lives));S.lives+=gain;}if(G.firstSteal==null){G.firstSteal=G.t;G.fsBy=ow;}G.p[ow].stolen=(G.p[ow].stolen||0)+X;(p.leakLog=p.leakLog||[]).push(G.t);G.fx.push({k:'leak',pi,t:.4});G.fx.push({k:'steal',pi:ow,t:1.2,txt:'+'+X+' ❤',x:5.5,y:ROWS-1.5});G.ev.push({k:'leak',pi,n:X});G.ev.push({k:'steal',pi:ow,n:X});}}});
  for(const f of G.fx){f.t-=dt;if(f.k==='part'){f.x+=f.vx*dt;f.y+=f.vy*dt;}if(f.k==='txt'||f.k==='coin')f.y-=dt*.8;}
  G.fx=G.fx.filter(f=>f.t>0);
  G.p.forEach((p,pi)=>{if(!p.ai||p.dead)return;p.aiT=(p.aiT||0)-dt;if(p.aiT<=0)aiThink(G,pi);});
@@ -406,6 +409,7 @@ function aiThink(G,pi){const p=G.p[pi],o=G.p[G.p.length===2?1-pi:sendTarget(G,pi
   if(walls.length&&R()<.6){const cov=w=>{let n=0;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const y=w.y+dy,x=w.x+dx;if(y>=0&&y<ROWS&&x>=0&&x<COLS&&p.dist[y][x]<Infinity)n+=1+(p.dist[y][x]>p.dist[SPAWN.y][SPAWN.x]*.5?.2:0);}return n;};const w=walls.reduce((b,x)=>cov(x)>cov(b)?x:b,walls[0]),ty=pickTy(),c=TT[ty].cost;if(c>budget||p.gold<c)break;const x=w.x,y=w.y;sell(p,w);if(build(p,ty,x,y))spend(c);else build(p,'mauer',x,y);continue;}
   const ts=p.towers.filter(t=>!t.master&&!TT[t.type].wall);if(!ts.length)break;const t=ts[Math.floor(R()*ts.length)];if(!canLv(t))continue;
   const c=lvCost(t);if(c>budget)break;lvUp(p,t);spend(c);}
+ if(p.gold>BLESS.cost(p.bless||0)*2.2&&(p.bless||0)<BLESS.max&&G.t>300)bless(p);
  aiRunes(G,p,danger,airThreat&&E.air<.5,camoThreat&&E.camo<.15);
  if(p.masterT&&p.mLvl<5){const c=MT[p.master].cost[p.mLvl];if(p.gold>c&&(danger?R()<.5:R()<.15+(p.master==='goldmeister'?.2:0)))mUp(p);}
  // --- Wirtschaft: Senden (Mischung aus Dauerdruck und gesparten Wellen) ---
@@ -418,9 +422,9 @@ function aiThink(G,pi){const p=G.p[pi],o=G.p[G.p.length===2?1-pi:sendTarget(G,pi
   if(p.burstT==null)p.burstT=(P.burst>.5?1:0)*p.income*(2.5+R()*4);
   if(p.burstT>0){if(p.gold>=p.burstT+5){sendBudget=p.gold*(.75+R()*.2);p.burstT=null;}else if(R()<.15*(1-P.burst))sendBudget=p.gold*.25;}
   else{sendBudget=p.gold*P.greed*(danger?.4:1)*(.6+R()*.4);p.burstT=R()<.25?null:0;}
-  const D=[.5,.9,1.05][G.diff??1];sendBudget*=D;
+  const D=[.6,.9,1.1][G.diff??1];sendBudget*=D;
   // frühe Phase entschärft: erst ab 50/45/30 s, in den ersten 3 min gedeckelt
-  if(G.t<[60,35,30][G.diff??1])sendBudget=0;if(G.t<180)sendBudget=Math.min(sendBudget,p.gold*[.15,.4,.45][G.diff??1]);
+  if(G.t<[55,35,40][G.diff??1])sendBudget=0;if(G.t<180)sendBudget=Math.min(sendBudget,p.gold*[.15,.4,.45][G.diff??1]);
   // Events: Rabatt angekündigt -> sparen, Rabatt/Blutmond aktiv -> kräftig senden
   if(G.nextEvt&&G.nextEvt.k==='rabatt')sendBudget=0;
   if((evOn(G,'rabatt')||evOn(G,'blutmond'))&&G.t>=180)sendBudget=Math.max(sendBudget,p.gold*.75*D);}
@@ -441,7 +445,7 @@ function tracePath(p){const d=p.dist,out=[];let x=SPAWN.x,y=SPAWN.y;if(d[y][x]==
  for(let i=0;i<COLS*ROWS&&d[y][x]>0;i++){let b=null;for(const[dx,dy]of[[0,1],[1,0],[-1,0],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=COLS||ny>=ROWS)continue;if(d[ny][nx]<d[y][x]&&(!b||d[ny][nx]<d[b[1]][b[0]]))b=[nx,ny];}if(!b)break;x=b[0];y=b[1];out.push([x,y]);}return out;}
 function getSnapshot(G){return{t:G.t,over:G.over,tick:G.tick,cols:COLS,rows:ROWS,spawn:{...SPAWN},
  evt:G.evt&&G.et<G.evt.end?{k:G.evt.k,left:G.evt.end-G.et}:null,next:G.nextEvt?{k:G.nextEvt.k,in:G.nextEvt.at-G.et}:null,
- lanes:G.p.map((p,pi)=>({pi,race:p.race||null,hero:p.hero?{...p.hero,cd:p.hero.cd.map(c=>Math.max(0,c-G.t)),need:heroXpNeed(p.hero.lvl),rng:heroStats(p.hero).rng}:null,runes:{...(p.runes||{})},lives:p.lives,gold:p.gold,income:p.income,master:p.master,mLvl:p.mLvl,mode:p.mode,
+ lanes:G.p.map((p,pi)=>({pi,race:p.race||null,hero:p.hero?{...p.hero,cd:p.hero.cd.map(c=>Math.max(0,c-G.t)),cdMax:p.hero.ab.map(k=>ABIL[k].cd),need:heroXpNeed(p.hero.lvl),rng:heroStats(p.hero).rng}:null,runes:{...(p.runes||{})},lives:p.lives,gold:p.gold,income:p.income,master:p.master,mLvl:p.mLvl,mode:p.mode,
   mine:{lvl:p.mine.lvl,w:p.mine.w,ph:(p.mine.ph||[]).slice(0,p.mine.w).map(v=>Math.max(0,v)),cap:MINE[p.mine.lvl].cap,per:Math.max(1,Math.round(MINE[p.mine.lvl].y*MINE[p.mine.lvl].trip)),gps:MINE[p.mine.lvl].y*p.mine.w},
   path:(p._pd===p.dist&&p._pc)?p._pc:(p._pd=p.dist,p._pc=tracePath(p)),
   towers:p.towers.map(t=>({id:t.id,type:t.type,vis:TT[t.type]?.vis||t.type,col:TT[t.type]?.race?RACE[TT[t.type].race].c2:null,race:TT[t.type]?.race||null,off:(t.offT||0)>G.t,x:t.x,y:t.y,up:[...t.up],lv:t.lv||1,master:t.master,ang:t.ang,born:t.born,upT:t.upT,tgt:t.tgt,wall:!!TT[t.type]?.wall,
@@ -453,6 +457,6 @@ function getSnapshot(G){return{t:G.t,over:G.over,tick:G.tick,cols:COLS,rows:ROWS
 function command(G,pi,c){const p=G.p[pi],T=c.id!=null?p.towers.find(t=>t.id===c.id):null;
  switch(c.op){case'sendTo':return false;case'build':return !!build(p,c.type,c.x,c.y);case'placeMaster':return !!placeMaster(p,c.x,c.y);case'pickMaster':return pickMaster(p,c.key);
   case'upgrade':return !!T&&lvUp(p,T);case'sell':if(!T||T.master)return false;sell(p,T);return true;case'target':if(!T||!TGT.includes(c.mode))return false;T.tgt=c.mode;return true;
-  case'send':return sendCreep(G,pi,c.creep);case'collect':return collect(p);case'worker':return buyWorker(p);case'mineUp':return mineUp(p);case'pickRace':return pickRace(p,c.race);case'heroMove':return heroMove(p,c.x,c.y);case'heroAbility':return heroAbility(G,pi,c.i);case'buildMany':return buildMany(p,c.type,c.cells);case'buyRune':return buyRune(p,c.e);case'dropRune':return false;// v27: Elemente sind endgültig
+  case'send':return sendCreep(G,pi,c.creep);case'collect':return collect(p);case'worker':return buyWorker(p);case'mineUp':return mineUp(p);case'bless':return bless(p);case'pickRace':return pickRace(p,c.race);case'heroMove':return heroMove(p,c.x,c.y);case'heroAbility':return heroAbility(G,pi,c.i);case'buildMany':return buildMany(p,c.type,c.cells);case'buyRune':return buyRune(p,c.e);case'dropRune':return false;// v27: Elemente sind endgültig
 case'slotRune':return slotRune(p,T,c.e);case'masterUp':return mUp(p);}return false;}
-if(typeof module!=='undefined')module.exports={incSat,canLv,lvCost,lvUp,LV_MAX,sellVal,PLAYABLE,sendTarget,aiHero,raceMix,RACE,raceTowers,ABIL,SPECIAL,pickRace,heroAbility,heroMove,heroXpNeed,heroStats,ctAvail,sendCd,planBuild,buildMany,aiPlaceDmg,pathCoverage,ELEM,COMBO,RUNE_COST,RUNE_MAX,dropRune,activeEls,FUSE_COST,LVL_COST,buyRune,slotRune,canSlot,elemDef,comboKey,typeCount,getSnapshot,command,tracePath,EVT,evOn,MINE,buyWorker,mineUp,collect,workerCost,creepCost,ECO,incGain,defEval,aiThink,newGame,step,build,canPlace,sell,upgrade,canUp,tStats,sendCreep,pickMaster,placeMaster,mUp,bfs,pickTarget,dmgMul,COLS,ROWS,SPAWN,TT,CT};
+if(typeof module!=='undefined')module.exports={BLESS,bless,incSat,canLv,lvCost,lvUp,LV_MAX,sellVal,PLAYABLE,sendTarget,aiHero,raceMix,RACE,raceTowers,ABIL,SPECIAL,pickRace,heroAbility,heroMove,heroXpNeed,heroStats,ctAvail,sendCd,planBuild,buildMany,aiPlaceDmg,pathCoverage,ELEM,COMBO,RUNE_COST,RUNE_MAX,dropRune,activeEls,FUSE_COST,LVL_COST,buyRune,slotRune,canSlot,elemDef,comboKey,typeCount,getSnapshot,command,tracePath,EVT,evOn,MINE,buyWorker,mineUp,collect,workerCost,creepCost,ECO,incGain,defEval,aiThink,newGame,step,build,canPlace,sell,upgrade,canUp,tStats,sendCreep,pickMaster,placeMaster,mUp,bfs,pickTarget,dmgMul,COLS,ROWS,SPAWN,TT,CT};
