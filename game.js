@@ -11,7 +11,7 @@ const TT={
   [{n:'Größere Bomben',d:'+0,4 Explosionsradius',cost:30,m:{splash:.4}},{n:'Schwere Ladung',d:'+20 Schaden',cost:55,m:{dmg:20}},{n:'Clusterbomben',d:'+30 Schaden, riesiger Radius',cost:150,m:{dmg:30,splash:.6}}],
   [{n:'Schnelles Laden',d:'25% schneller',cost:30,m:{rateMul:.75}},{n:'Panzerbrecher',d:'Durchdringt Rüstung',cost:50,m:{ap:1}},{n:'Flak',d:'Trifft Flieger, +10 Schaden',cost:90,m:{air:1,dmg:10}}]]},
  frost:{n:'Frost',c:'#6cc8f0',ico:'❄',cost:20,b:{dmg:5,rng:2.6,rate:.8,dt:'magic',spd:10,slow:.35,slowDur:2},up:[
-  [{n:'Eiskälte',d:'+10% Verlangsamung',cost:25,m:{slow:.1}},{n:'Permafrost',d:'+10% Verl., +1,5s Dauer',cost:45,m:{slow:.1,slowDur:1.5}},{n:'Eissplitter',d:'Flächenfrost, +15 Schaden',cost:100,m:{splash:1,dmg:15}}],
+  [{n:'Eiskälte',d:'+10% Slow',cost:25,m:{slow:.1}},{n:'Permafrost',d:'+10% Verl., +1,5s Dauer',cost:45,m:{slow:.1,slowDur:1.5}},{n:'Eissplitter',d:'Flächenfrost, +15 Schaden',cost:100,m:{splash:1,dmg:15}}],
   [{n:'Frostbiss',d:'+6 Schaden',cost:25,m:{dmg:6}},{n:'Kältesinn',d:'Erkennt Tarnung',cost:35,m:{camo:1}},{n:'Gletscher',d:'+1 Reichweite, 40% schneller',cost:90,m:{rng:1,rateMul:.6}}]]},
  gift:{n:'Dornen',c:'#7bd65a',ico:'🌿',cost:20,b:{dmg:4,rng:2.8,rate:1,dt:'poison',spd:9,dot:14,dotDur:3},up:[
   [{n:'Spürgas',d:'Erkennt Tarnung',cost:20,m:{camo:1}},{n:'Säure',d:'+8 Gift/s, ätzt Rüstung',cost:35,m:{dot:8,ap:1}},{n:'Seuche',d:'+25 Gift/s, Flächenwirkung',cost:120,m:{dot:25,splash:1}}],
@@ -48,7 +48,7 @@ const RACE={
  untote:{mark:'eyes',n:'Astralwanderer',locked:1,c:'#6B3FA0',c2:'#7CFF4F',acc:'#D9D3C1',d:'Kontrolle & Wirtschaft',
   t:{u_ghul:{n:'Ghul-Grube',ico:'🦴',cost:10,vis:'pfeil',role:'DMG',d:'Ziel nimmt +15 % Schaden',b:{dmg:8,rng:2.6,rate:.85,dt:'phys',spd:12,amp:.15}},
    u_kessel:{n:'Seuchenkessel',ico:'☠',cost:20,vis:'gift',role:'DMG',d:'Giftwolke 12/s in 2 Feldern',b:{dmg:2,rng:2.4,rate:1.2,dt:'poison',spd:9,splash:2,dot:12,dotDur:3}},
-   u_gruft:{n:'Frostgruft',ico:'❄',cost:22,vis:'frost',role:'SLOW',d:'30 % Verlangsamung, Fläche',b:{dmg:4,rng:2.6,rate:1,dt:'magic',spd:10,splash:1.2,slow:.3,slowDur:2}},
+   u_gruft:{n:'Frostgruft',ico:'❄',cost:22,vis:'frost',role:'SLOW',d:'30 % Slow, Fläche',b:{dmg:4,rng:2.6,rate:1,dt:'magic',spd:10,splash:1.2,slow:.3,slowDur:2}},
    u_nekro:{n:'Totenbeschwörer',ico:'💀',cost:28,vis:'blitz',role:'ECO',d:'Verwandlungen +2 Gold',b:{dmg:7,rng:2.8,rate:.9,dt:'magic',spd:12,killGold:2}},
    u_banshee:{n:'Banshee-Turm',ico:'👻',cost:26,vis:'frost',role:'CAMO',d:'Erkennt Tarnung, trifft Luft',b:{dmg:18,rng:3,rate:1,dt:'magic',spd:12,camo:1}}},
   unit:{id:'lich',n:'Lich-Schatten',c:'#9a6aff',cost:90,inc:11,hp:600,sp:1.3,unlock:200,camo:1,spawn:3,L:2,cd:30},
@@ -58,7 +58,7 @@ const RACE={
    e_brunnen:{n:'Mondbrunnen',ico:'⛲',cost:20,vis:'aura',role:'SUP',d:'+1 Reichweite in 2 Feldern',b:{dmg:0,rng:2,rate:99,noAtk:1,aura:{rng:1,r:2}}},
    e_baum:{n:'Uralter Baum',ico:'🌳',cost:24,vis:'gift',role:'SLOW',d:'Wurzeln: 0,8 s Stun, 2 Ziele',b:{dmg:8,rng:2.6,rate:1.8,dt:'magic',spd:9,freeze:1,freezeDur:.8,multi:2}},
    e_eule:{n:'Eulenwacht',ico:'🦉',cost:16,vis:'pfeil',role:'CAMO',d:'Tarnsicht für Türme in 4 Feldern',b:{dmg:7,rng:4,rate:.8,dt:'phys',spd:14,camo:1,aura:{camo:1,r:4}}},
-   e_dryade:{n:'Dryadenhain',ico:'🍃',cost:30,vis:'frost',role:'AA',d:'+100 % vs. Luft, 30 % Verlangsamung',b:{dmg:36,rng:3.2,rate:1.3,dt:'magic',spd:13,airMul:1,slow:.3,slowDur:1.5}}},
+   e_dryade:{n:'Dryadenhain',ico:'🍃',cost:30,vis:'frost',role:'AA',d:'+100 % vs. Luft, 30 % Slow',b:{dmg:36,rng:3.2,rate:1.3,dt:'magic',spd:13,airMul:1,slow:.3,slowDur:1.5}}},
   unit:{id:'wandler',n:'Gestaltwandler',c:'#4FE3D0',cost:85,inc:10,hp:650,sp:1.3,unlock:200,morph:1,L:2,cd:30},
   hero:{n:'Pip',c:'#CFE3FF',ab:['sternenregen','mondlicht']}},
  zwerge:{mark:'gear',n:'Hüter',locked:1,c:'#5DBB4A',c2:'#FFE9F0',acc:'#8A6A3A',d:'Rette die Ängste! Viel Gold und starke Bremsen. Jede Angst wird zu Licht und wächst im Garten.',xform:1,
@@ -72,7 +72,7 @@ const RACE={
 for(const[rk,R]of Object.entries(RACE))for(const[k,T]of Object.entries(R.t)){T.race=rk;T.c=R.c;T.gen=1;T.up=genUp(T.cost,T.b.camo?{n:'Verstärkt',d:'+0,3 Reichweite, 15 % schneller',cost:Math.round(T.cost*1.35),m:{rng:.3,rateMul:.85}}:null);
  if(T.b.noAtk)T.up=[[{n:'Ausbau',d:'Effekt verstärkt',cost:Math.round(T.cost*1.2),m:{auraUp:1}}],[]];TT[k]=T;}
 const raceTowers=rk=>Object.keys(RACE[rk].t);
-const ECO={incMin:.2,incDim:400,incHp:1900,startGold:70,bounty:1,hpMul:.8,sdStart:840,sdLen:220};
+const ECO={incMin:.5,incDim:450,incHp:3600,startGold:70,bounty:1,hpMul:.8,sdStart:840,sdLen:220};
 const CT=[
  {id:'laeufer',n:'Läufer',c:'#ddd',cost:5,inc:1,hp:32,sp:1.6,gold:1,unlock:5},
  {id:'flitzer',n:'Flitzer',c:'#ffe066',cost:10,inc:2,hp:55,sp:2.8,gold:1,unlock:60},
@@ -81,7 +81,9 @@ const CT=[
  {id:'flieger',n:'Flieger',c:'#7ad',cost:45,inc:6,hp:290,sp:1.5,gold:4,unlock:150,fly:1},
  {id:'heiler',n:'Heiler',c:'#f6a',cost:80,inc:10,hp:620,sp:1.3,gold:6,unlock:180,heal:1},
  {id:'boss',n:'Koloss',c:'#e33',cost:150,inc:18,hp:2800,sp:.9,gold:12,unlock:240,boss:1,armor:1}];
-function incGain(p,ct){return Math.max(1,Math.round(ct.inc*Math.max(ECO.incMin,1-p.income/ECO.incDim)));}
+// v27: sanfte Sättigung statt Absturz auf +1 (alt: Faktor 1-inc/400, Boden 20 %, gerundet -> ab ~300 Einkommen gab jede Einheit +1)
+function incSat(p){return Math.max(ECO.incMin,1/(1+Math.max(0,p.income-60)/ECO.incDim));}
+function incGain(p,ct){return Math.max(1,Math.ceil(ct.inc*incSat(p)-1e-9));}
 // ================= Spezialeinheiten (Doc §3.2) & Rasseneinheiten =================
 // Bounty-Regel: Kopfgeld = Einkommensgewinn des Senders (bounty = ig). Cooldowns pro Sender. L = gestohlene Leben bei Leak.
 const SPECIAL=[
@@ -138,7 +140,7 @@ function mStats(k,l){if(k==='blitzmeister')return{rate:2.2-l*.25,targets:1+l,dmg
  if(k==='frostmeister')return{rate:6-l*.6,slow:.2+l*.08,dur:1.5+l*.5,dmg:5*l};return{inc:l*3,kill:l*.15};}
 function tStats(t,noBuff){const T=TT[t.type],s=Object.assign({camo:0,ap:0,air:0,splash:0,slow:0,dot:0,chain:0,pierce:1,slowDur:2,dotDur:3},T.b);
  for(let p=0;p<2;p++)for(let i=0;i<t.up[p];i++){const m=T.up[p][i].m;for(const k in m){if(k==='rateMul')s.rate*=m[k];else if(k==='camo'||k==='ap'||k==='air')s[k]=1;else s[k]=(s[k]||0)+m[k];}}
- if(s.dmgPct){s.dmg*=1+s.dmgPct;}if(s.auraUp&&s.aura){const a=s.aura={...s.aura};if(a.rateMul)a.rateMul-=.08;if(a.dmgMul)a.dmgMul+=.1;if(a.rng)a.rng+=.5;}if(s.auraUp&&s.gps)s.gps+=1;
+ s.dmg*=T.race==='orks'?1.16:.9;/*v27-Balance: Verteidigung -10 %, Glutriesen-Ausgleich*/if(s.dmgPct){s.dmg*=1+s.dmgPct;}{const L=(t.lv||1)-1;if(L>0){s.dmg*=1+.1*L+(L>=4?.1:0)+(L>=9?.2:0);s.rate*=Math.pow(.98,L);s.rng+=.05*L;}}if(s.auraUp&&s.aura){const a=s.aura={...s.aura};if(a.rateMul)a.rateMul-=.08;if(a.dmgMul)a.dmgMul+=.1;if(a.rng)a.rng+=.5;}if(s.auraUp&&s.gps)s.gps+=1;
  if(t.type==='element')elemStats(t,s);
  if(!noBuff&&t.buff){s.rate*=t.buff.rateMul;s.rng+=t.buff.rng;if(t.buff.camo)s.camo=1;if(t.buff.dmgMul)s.dmg*=t.buff.dmgMul;}
  return s;}
@@ -154,26 +156,26 @@ const ELEM={
  erde:{n:'Erde',ico:'🪨',c:'#b08850',role:'DMG',d:'Splash +12 in 1 Feld, nur Boden',m:{splash:1,dmg:12,ground:1},sc:['dmg'],l5:{freeze:.5,freezeDur:.5}},
  luft:{n:'Luft',ico:'🌪',c:'#c8f0ff',role:'AA',d:'Trifft Luft, +50 % vs. Flieger',m:{air:1,airMul:.5},sc:['airMul'],l5:{multi:3}},
  blitz:{n:'Blitz',ico:'⚡',c:'#fff35c',role:'DMG',d:'Kette auf 3 Ziele',m:{chain:3},sc:['dmg'],l5:{chain:2}},
- eis:{n:'Eis',ico:'❄',c:'#9fe8ff',role:'SLOW',d:'30 % Verlangsamung 1,5 s, 10 % Einfrieren',m:{slow:.3,slowDur:1.5,freeze:.1,freezeDur:.8},sc:[],l5:{freeze:.15}},
+ eis:{n:'Eis',ico:'❄',c:'#9fe8ff',role:'SLOW',d:'30 % Slow 1,5 s, 10 % Einfrieren',m:{slow:.3,slowDur:1.5,freeze:.1,freezeDur:.8},sc:[],l5:{freeze:.15}},
  licht:{n:'Licht',ico:'☀',c:'#fff4b0',role:'CAMO',d:'Erkennt Tarnung, +20 % vs. Getarnte',m:{camo:1,camoMul:.2},sc:['camoMul'],l5:{aura:{camo:1,r:4}}},
  schatten:{n:'Schatten',ico:'🌑',c:'#9a6aff',role:'ECO',d:'+1 Gold pro Verwandlung, durchdringt Rüstung',m:{killGold:1,ap:1},sc:['killGold'],l5:{killGold:3}}};
 const COMBO={// Schlüssel: zwei Basis-Elemente alphabetisch mit '+'
- 'feuer+wasser':{n:'Dampf',ico:'♨',c:'#e0e0e0',role:'SLOW',d:'Dampfwolke 1,5 Felder: 25 % Verlangsamung + 10/s',m:{splash:1.5,slow:.25,slowDur:2,dot:10,dotDur:2},sc:['dot']},
+ 'feuer+wasser':{n:'Dampf',ico:'♨',c:'#e0e0e0',role:'SLOW',d:'Dampfwolke 1,5 Felder: 25 % Slow + 10/s',m:{splash:1.5,slow:.25,slowDur:2,dot:10,dotDur:2},sc:['dot']},
  'erde+feuer':{n:'Magma',ico:'🌋',c:'#ff4a10',role:'DMG',d:'Lava 25/s am Ziel, Splash, nur Boden',m:{splash:1,dot:25,dotDur:4,ground:1},sc:['dot']},
  'blitz+feuer':{n:'Plasma',ico:'🟣',c:'#ff5cf0',role:'DMG',d:'Strahl +60 Schaden, durchschlägt 3',m:{dmg:60,pierce:3,rateMul:1.3},sc:['dmg']},
  'feuer+licht':{n:'Sonne',ico:'🌞',c:'#ffd040',role:'CAMO',d:'Erkennt Tarnung, Flare +40 in 2 Feldern',m:{camo:1,splash:2,dmg:40,rateMul:1.8},sc:['dmg']},
  'feuer+schatten':{n:'Höllenfeuer',ico:'😈',c:'#c02040',role:'DMG',d:'Brand 15/s, ignoriert Rüstung',m:{dot:15,dotDur:4,ap:1},sc:['dot']},
  'blitz+wasser':{n:'Gewitterflut',ico:'🌊',c:'#4ac0ff',role:'DMG',d:'Kette 4 Ziele, +35 Schaden',m:{chain:4,dmg:35},sc:['dmg']},
- 'eis+wasser':{n:'Gletscher',ico:'🧊',c:'#b0f0ff',role:'SLOW',d:'35 % Verlangsamung in 1,5 Feldern',m:{splash:1.5,slow:.35,slowDur:2},sc:[]},
+ 'eis+wasser':{n:'Gletscher',ico:'🧊',c:'#b0f0ff',role:'SLOW',d:'35 % Slow in 1,5 Feldern',m:{splash:1.5,slow:.35,slowDur:2},sc:[]},
  'licht+wasser':{n:'Quelle',ico:'⛲',c:'#80e0ff',role:'SUP',d:'Türme in 2 Feldern +15 % Angriffstempo',m:{aura:{rateMul:.87,r:2}},sc:[]},
  'schatten+wasser':{n:'Dornennebel',ico:'🌿',c:'#7bd65a',role:'DMG',d:'Dornen 12/s für 6 s',m:{dot:12,dotDur:6,ap:1},sc:['dot']},
  'erde+licht':{n:'Kristall',ico:'💎',c:'#c0a0ff',role:'ECO',d:'+2 Gold pro Verwandlung, +1 Gold/s passiv',m:{killGold:2,gps:1},sc:['killGold','gps']},
  'blitz+luft':{n:'Gewitter',ico:'⛈',c:'#d0d8ff',role:'AA',d:'+45 Schaden, trifft Luft, 2 Ziele',m:{air:1,dmg:45,multi:2,airMul:.3},sc:['dmg']},
  'licht+luft':{n:'Aurora',ico:'🌈',c:'#a0ffd0',role:'SUP',d:'Türme in 2,5 Feldern +1 Reichweite & Tarnsicht',m:{aura:{rng:1,camo:1,r:2.5}},sc:[]},
- 'blitz+eis':{n:'Frostfunke',ico:'✳',c:'#c0f0ff',role:'SLOW',d:'Kette 3, +25 Schaden, 15 % Verlangsamung',m:{chain:3,dmg:25,slow:.15,slowDur:2},sc:['dmg']},
+ 'blitz+eis':{n:'Frostfunke',ico:'✳',c:'#c0f0ff',role:'SLOW',d:'Kette 3, +25 Schaden, 15 % Slow',m:{chain:3,dmg:25,slow:.15,slowDur:2},sc:['dmg']},
  'blitz+schatten':{n:'Nachtblitz',ico:'🌩',c:'#8060ff',role:'DMG',d:'15 % Krit ×3, Krit betäubt 0,4 s',m:{crit:.15,freezeDur:.4},sc:['crit']},
  'licht+schatten':{n:'Zwielicht',ico:'🌗',c:'#d0a0ff',role:'SUP',d:'Ziel nimmt +20 % Schaden (4 s), Tarnsicht',m:{amp:.2,camo:1},sc:['amp']},
- 'eis+schatten':{n:'Seelenfrost',ico:'👻',c:'#a0c0ff',role:'ECO',d:'25 % Verlangsamung, +3 Gold pro Verwandlung',m:{slow:.25,slowDur:2,killGold:3},sc:['killGold']}};
+ 'eis+schatten':{n:'Seelenfrost',ico:'👻',c:'#a0c0ff',role:'ECO',d:'25 % Slow, +3 Gold pro Verwandlung',m:{slow:.25,slowDur:2,killGold:3},sc:['killGold']}};
 const comboKey=(a,b)=>[a,b].sort().join('+');
 function elemDef(t){const el=t.el||[];if(!el.length)return null;const tl=1+((t.up&&t.up[0])||0);if(el.length===1)return{...ELEM[el[0].e],lv:tl,base:1};
  const C=COMBO[comboKey(el[0].e,el[1].e)];return C?{...C,lv:tl}:null;}
@@ -198,7 +200,7 @@ function stepAuras(p,G){for(const t of p.towers)t.buff=null;for(const a of p.tow
  if(G&&G.t<(p.anvilT||0)&&p.anvil)for(const t of p.towers){if(TT[t.type]?.wall||Math.hypot(t.x+.5-p.anvil.x,t.y+.5-p.anvil.y)>2.5)continue;const b=t.buff||(t.buff={rateMul:1,rng:0,camo:0});b.dmgMul=(b.dmgMul||1)*1.3;}
  if(G&&(G.t<(p.rateBuffT||0)||G.t<(p.moonT||0)))for(const t of p.towers){if(TT[t.type]?.wall)continue;const b=t.buff||(t.buff={rateMul:1,rng:0,camo:0});if(G.t<(p.rateBuffT||0))b.rateMul*=.7;if(G.t<(p.moonT||0)){b.camo=1;b.rng=Math.max(b.rng,1);}}}
 
-function mkPlayer(ai){return{ai,gold:ECO.startGold,income:10,lives:30,mine:{lvl:0,w:0,ph:[]},grid:Array.from({length:ROWS},()=>Array(COLS).fill(null)),towers:[],creeps:[],proj:[],dist:null,master:null,mLvl:0};}
+function mkPlayer(ai){return{ai,gold:ECO.startGold,income:10,lives:52,mine:{lvl:0,w:0,ph:[]},grid:Array.from({length:ROWS},()=>Array(COLS).fill(null)),towers:[],creeps:[],proj:[],dist:null,master:null,mLvl:0};}
 const SPAWN={x:5,y:0};
 function bfs(grid){const d=Array.from({length:ROWS},()=>Array(COLS).fill(Infinity)),q=[];
  for(let x=0;x<COLS;x++)if(!grid[ROWS-1][x]){d[ROWS-1][x]=0;q.push([x,ROWS-1]);}
@@ -221,7 +223,14 @@ function buildMany(p,type,cells){let n=0;for(const[x,y]of cells)if(build(p,type,
 function canUp(t,path){if(t.master||t.up[path]>=TT[t.type].up[path].length)return false;return !(t.up[path]===2&&t.up[1-path]===3);}
 function upCost(t,path){return TT[t.type].up[path][t.up[path]].cost;}
 function upgrade(p,t,path){if(!canUp(t,path))return false;const c=upCost(t,path);if(p.gold<c)return false;p.gold-=c;t.upT=p.now||0;t.spent+=c;t.up[path]++;return true;}
-function sell(p,t){if(t.master)return;p.gold+=Math.floor(t.spent*.75);p.grid[t.y][t.x]=null;p.towers.splice(p.towers.indexOf(t),1);p.dist=bfs(p.grid);}
+// v27: 10 Stufen je Turm. Stufenaufstieg kostet Gold (glatte Kurve), +10 % Schaden, 2 % Tempo, +0,05 RW je Stufe;
+// Pfad-Boni werden automatisch freigeschaltet (Lv3/5/10 Pfad A, Lv7/9 Pfad B). Meilensteine Lv5 + Lv10.
+const LV_MAX=10,LV_AUTO={3:0,5:0,7:1,9:1,10:0};
+function canLv(t){return !!t&&!t.master&&!TT[t.type]?.wall&&(t.lv||1)<LV_MAX;}
+function lvCost(t){const T=TT[t.type];return Math.ceil(Math.max(8,T.cost)*.6*Math.pow(1.22,(t.lv||1)-1));}
+function lvUp(p,t){if(!canLv(t))return false;const c=lvCost(t);if(p.gold<c)return false;p.gold-=c;t.spent+=c;t.lv=(t.lv||1)+1;t.upT=p.now||0;const pa=LV_AUTO[t.lv];if(pa!=null){if(canUp(t,pa))t.up[pa]++;else if(canUp(t,1-pa))t.up[1-pa]++;}return true;}
+const UNDO_T=10;function sellVal(p,t){return Math.floor(t.spent*((p.now||0)-(t.born||0)<UNDO_T&&(t.lv||1)===1?1:.75));}
+function sell(p,t){if(t.master)return;p.gold+=sellVal(p,t);p.grid[t.y][t.x]=null;p.towers.splice(p.towers.indexOf(t),1);p.dist=bfs(p.grid);}
 function pickMaster(p,k){if(p.master)return false;p.master=k;return true;}
 function placeMaster(p,x,y){if(!p.master||p.masterT)return null;const t=build(p,'master',x,y,true);if(t){p.masterT=t;p.mLvl=1;}return t;}
 function mUp(p){if(!p.masterT||p.mLvl>=5)return false;const c=MT[p.master].cost[p.mLvl];if(p.gold<c)return false;p.gold-=c;p.mLvl++;return true;}
@@ -233,7 +242,7 @@ const evOn=(G,k)=>G.evt&&G.evt.k===k&&G.et<G.evt.end;
 function stepEvents(G,rdt){G.et=(G.et||0)+rdt;const nextMin=(Math.floor(G.et/60)+1)*60;
  if(!G.nextEvt&&G.et>=nextMin-5){if(!G.bag||!G.bag.length){G.bag=Object.keys(EVT).sort(()=>Math.random()-.5);if(G.bag[0]===G.lastEvt)G.bag.push(G.bag.shift());}const k=G.bag.shift();G.nextEvt={k,at:nextMin};G.ev.push({k:'announce',e:k,pi:0});}
  if(G.nextEvt&&G.et>=G.nextEvt.at){const k=G.nextEvt.k;G.evt={k,start:G.et,end:G.et+EVT[k].dur};G.lastEvt=k;G.nextEvt=null;if(k==='boost')G.boostTick=true;G.ev.push({k:'evstart',e:k,pi:0});}}
-function creepCost(G,ct){return evOn(G,'rabatt')?Math.ceil(ct.cost*.7):ct.cost;}
+function creepCost(G,ct){const c=Math.max(1,Math.round(ct.cost*.85));return evOn(G,'rabatt')?Math.ceil(c*.7):c;}
 // ---- Goldmine (Design-Doc §5) ----
 // Goldmine: Arbeiter tragen Gold aus dem Stollen zum Depot; bei Ankunft wird gutgeschrieben (kein Lager/Einsammeln)
 // trip = Hin+Rück in s, y = Gold/s pro Arbeiter (Gold pro Lieferung = y*trip)
@@ -331,13 +340,13 @@ function defEval(p){let dps=0,air=0,camo=0,phys=0;
 const recent=(log,t,w)=>(log||[]).filter(e=>(e[0]??e)>t-w);
 // KI: Runen am Schrein kaufen und in Element-Türme setzen (Konter: Luft vs Flieger, Licht vs Tarnung, sonst Kombos)
 function aiRunes(G,p,danger,needAir,needCamo){const R=Math.random;if(R()>(danger?.6:.35))return;
- const ts=p.towers.filter(t=>t.type==='element');if(!ts.length)return;const t=ts.reduce((a,b)=>((a.el||[]).length+a.up[0]<=(b.el||[]).length+b.up[0]?a:b));const el=t.el||[];let e=null;p.runes=p.runes||{};const own=Object.keys(p.runes).filter(k=>p.runes[k]>0),want=needAir?'luft':needCamo?'licht':null;if(want&&!own.includes(want)&&own.length>=RUNE_MAX&&p.gold>=RUNE_COST+5){dropRune(p,own[0]);own.shift();}
+ const ts=p.towers.filter(t=>t.type==='element');if(!ts.length)return;const t=ts.reduce((a,b)=>((a.el||[]).length+a.up[0]<=(b.el||[]).length+b.up[0]?a:b));const el=t.el||[];let e=null;p.runes=p.runes||{};const own=Object.keys(p.runes).filter(k=>p.runes[k]>0),want=needAir?'luft':needCamo?'licht':null;
  if(want&&(own.includes(want)||own.length<RUNE_MAX)&&(!el.length||el[0].e!==want))e=want;
  else if(!el.length)e=own.length&&(own.length>=RUNE_MAX||R()<.5)?own[Math.floor(R()*own.length)]:['feuer','erde','blitz','eis','wasser','schatten'].filter(k=>!own.includes(k))[Math.floor(R()*5)];
- if(el.length&&canUp(t,0)&&p.gold>=upCost(t,0)+15&&R()<.5){upgrade(p,t,0);return;}if(!e)return;
+ if(el.length&&canLv(t)&&p.gold>=lvCost(t)+15&&R()<.5){lvUp(p,t);return;}if(!e)return;
  p.runes=p.runes||{};const need=(p.runes[e]?0:RUNE_COST);if(!(p.runes[e]>0)&&p.gold<need+5)return;if(!(p.runes[e]>0)&&!buyRune(p,e))return;const c=canSlot(p,t,e);if(c)slotRune(p,t,e);}
 // KI-Platzierung: Schadenstürme dorthin, wo sie die meisten Pfadzellen abdecken (Kurven/U-Turns, mittleres/spätes Labyrinth).
-// Kandidaten = vorhandene Mauern (werden ersetzt) + geplante Mauerzellen -> Labyrinth bleibt intakt. Splash bevorzugt Kurven, Verlangsamung früh im Pfad.
+// Kandidaten = vorhandene Mauern (werden ersetzt) + geplante Mauerzellen -> Labyrinth bleibt intakt. Splash bevorzugt Kurven, Slow früh im Pfad.
 function spotScore(p,ty,x,y,path,turn){const r=ty==='element'?3:TT[ty].b.rng||2.5,L=path.length||1,slow=ty==='frost',splash=ty==='kanone';let sc=0;
  path.forEach(([px,py],i)=>{if(Math.hypot(px-x,py-y)>r)return;let w=1;if(turn[i])w+=splash?1.5:.4;const f=i/L;w*=slow?1.3-.7*f:.7+.6*Math.min(1,f*1.6);sc+=w;});
  for(const t of p.towers)if(!TT[t.type].wall&&Math.hypot(t.x-x,t.y-y)<1.5)sc*=.85;return sc;}
@@ -378,7 +387,7 @@ function aiThink(G,pi){const p=G.p[pi],o=G.p[G.p.length===2?1-pi:sendTarget(G,pi
  let budget=danger?p.gold*(ratio<.5||leaks?1:.75):ecoDef?p.gold*(ratio>2.5?.15:.35):0;const spend=c=>{budget-=c;};
  // gezielte Konter
  if(camoThreat&&E.camo<.15&&budget>20){const t=p.towers.find(t=>!t.master&&CAMO[t.type]&&t.up[CAMO[t.type][0]]<CAMO[t.type][1]&&canUp(t,CAMO[t.type][0]));
-  if(t){const c=upCost(t,CAMO[t.type][0]);if(c<=budget&&upgrade(p,t,CAMO[t.type][0]))spend(c);}}
+  if(t){const c=lvCost(t);if(c<=budget&&lvUp(p,t))spend(c);}}
  const basic=p.race?raceTowers(p.race)[0]:'pfeil',slowT=p.race?(raceRole(p.race,'SLOW')||raceTowers(p.race)[1]):'frost';
  const pickTy=()=>{let ty=G.t<60?((p.ept=(p.ept||0)+1)%4===0?slowT:basic):mix[Math.floor(R()*mix.length)];if(G.t>=90&&typeCount(p,'element')<Math.min(ELEM_MAX_T,1+Math.floor(G.t/150))&&R()<.4)ty='element';if(airThreat&&E.air<.5&&(ty==='kanone'||TT[ty].b.ground))ty=(p.race&&raceRole(p.race,'AA'))||mix.find(x=>!TT[x].b.ground)||'pfeil';if(camoThreat&&E.camo<.15&&p.race&&raceRole(p.race,'CAMO')&&R()<.5)ty=raceRole(p.race,'CAMO');if(TT[ty].max&&typeCount(p,ty)>=TT[ty].max)ty=basic;
   if(danger&&TT[ty].cost>Math.min(budget,p.gold)){const ch=Object.keys(TT).filter(k=>!TT[k].wall&&TT[k].cost<=Math.min(budget,p.gold)&&(k!=='kanone'||!airThreat));if(ch.length)ty=ch[Math.floor(R()*ch.length)];}return ty;};
@@ -395,8 +404,8 @@ function aiThink(G,pi){const p=G.p[pi],o=G.p[G.p.length===2?1-pi:sendTarget(G,pi
   if(R()<.6){const ty=pickTy(),c=TT[ty].cost;if(c>budget||p.gold<c)break;if(aiPlaceDmg(p,ty))spend(c);else break;continue;}
   const walls=[];
   if(walls.length&&R()<.6){const cov=w=>{let n=0;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const y=w.y+dy,x=w.x+dx;if(y>=0&&y<ROWS&&x>=0&&x<COLS&&p.dist[y][x]<Infinity)n+=1+(p.dist[y][x]>p.dist[SPAWN.y][SPAWN.x]*.5?.2:0);}return n;};const w=walls.reduce((b,x)=>cov(x)>cov(b)?x:b,walls[0]),ty=pickTy(),c=TT[ty].cost;if(c>budget||p.gold<c)break;const x=w.x,y=w.y;sell(p,w);if(build(p,ty,x,y))spend(c);else build(p,'mauer',x,y);continue;}
-  const ts=p.towers.filter(t=>!t.master&&!TT[t.type].wall);if(!ts.length)break;const t=ts[Math.floor(R()*ts.length)];let pa=R()<.5?0:1;if(!canUp(t,pa))pa=1-pa;if(!canUp(t,pa))continue;
-  const c=upCost(t,pa);if(c>budget)break;upgrade(p,t,pa);spend(c);}
+  const ts=p.towers.filter(t=>!t.master&&!TT[t.type].wall);if(!ts.length)break;const t=ts[Math.floor(R()*ts.length)];if(!canLv(t))continue;
+  const c=lvCost(t);if(c>budget)break;lvUp(p,t);spend(c);}
  aiRunes(G,p,danger,airThreat&&E.air<.5,camoThreat&&E.camo<.15);
  if(p.masterT&&p.mLvl<5){const c=MT[p.master].cost[p.mLvl];if(p.gold>c&&(danger?R()<.5:R()<.15+(p.master==='goldmeister'?.2:0)))mUp(p);}
  // --- Wirtschaft: Senden (Mischung aus Dauerdruck und gesparten Wellen) ---
@@ -409,9 +418,9 @@ function aiThink(G,pi){const p=G.p[pi],o=G.p[G.p.length===2?1-pi:sendTarget(G,pi
   if(p.burstT==null)p.burstT=(P.burst>.5?1:0)*p.income*(2.5+R()*4);
   if(p.burstT>0){if(p.gold>=p.burstT+5){sendBudget=p.gold*(.75+R()*.2);p.burstT=null;}else if(R()<.15*(1-P.burst))sendBudget=p.gold*.25;}
   else{sendBudget=p.gold*P.greed*(danger?.4:1)*(.6+R()*.4);p.burstT=R()<.25?null:0;}
-  const D=[.5,.72,1.05][G.diff??1];sendBudget*=D;
+  const D=[.5,.9,1.05][G.diff??1];sendBudget*=D;
   // frühe Phase entschärft: erst ab 50/45/30 s, in den ersten 3 min gedeckelt
-  if(G.t<[60,50,30][G.diff??1])sendBudget=0;if(G.t<180)sendBudget=Math.min(sendBudget,p.gold*[.15,.22,.45][G.diff??1]);
+  if(G.t<[60,35,30][G.diff??1])sendBudget=0;if(G.t<180)sendBudget=Math.min(sendBudget,p.gold*[.15,.4,.45][G.diff??1]);
   // Events: Rabatt angekündigt -> sparen, Rabatt/Blutmond aktiv -> kräftig senden
   if(G.nextEvt&&G.nextEvt.k==='rabatt')sendBudget=0;
   if((evOn(G,'rabatt')||evOn(G,'blutmond'))&&G.t>=180)sendBudget=Math.max(sendBudget,p.gold*.75*D);}
@@ -435,7 +444,7 @@ function getSnapshot(G){return{t:G.t,over:G.over,tick:G.tick,cols:COLS,rows:ROWS
  lanes:G.p.map((p,pi)=>({pi,race:p.race||null,hero:p.hero?{...p.hero,cd:p.hero.cd.map(c=>Math.max(0,c-G.t)),need:heroXpNeed(p.hero.lvl),rng:heroStats(p.hero).rng}:null,runes:{...(p.runes||{})},lives:p.lives,gold:p.gold,income:p.income,master:p.master,mLvl:p.mLvl,mode:p.mode,
   mine:{lvl:p.mine.lvl,w:p.mine.w,ph:(p.mine.ph||[]).slice(0,p.mine.w).map(v=>Math.max(0,v)),cap:MINE[p.mine.lvl].cap,per:Math.max(1,Math.round(MINE[p.mine.lvl].y*MINE[p.mine.lvl].trip)),gps:MINE[p.mine.lvl].y*p.mine.w},
   path:(p._pd===p.dist&&p._pc)?p._pc:(p._pd=p.dist,p._pc=tracePath(p)),
-  towers:p.towers.map(t=>({id:t.id,type:t.type,vis:TT[t.type]?.vis||t.type,col:TT[t.type]?.race?RACE[TT[t.type].race].c2:null,race:TT[t.type]?.race||null,off:(t.offT||0)>G.t,x:t.x,y:t.y,up:[...t.up],lv:t.up[0]+t.up[1],master:t.master,ang:t.ang,born:t.born,upT:t.upT,tgt:t.tgt,wall:!!TT[t.type]?.wall,
+  towers:p.towers.map(t=>({id:t.id,type:t.type,vis:TT[t.type]?.vis||t.type,col:TT[t.type]?.race?RACE[TT[t.type].race].c2:null,race:TT[t.type]?.race||null,off:(t.offT||0)>G.t,x:t.x,y:t.y,up:[...t.up],lv:t.lv||1,master:t.master,ang:t.ang,born:t.born,upT:t.upT,tgt:t.tgt,wall:!!TT[t.type]?.wall,
    rng:t.master?(p.master==='blitzmeister'?mStats('blitzmeister',p.mLvl).rng:.5):tStats(t).rng,el:t.type==='element'&&elemDef(t)?(d=>({n:d.n,ico:d.ico,c:d.c,lv:d.lv,base:!!d.base,runes:t.el.map(r=>r.e)}))(elemDef(t)):null,buff:!!t.buff,camo:!t.master&&!TT[t.type]?.wall&&!!tStats(t).camo})),
   creeps:p.creeps.map(c=>({id:c.id,type:c.ct.id,raceUnit:!!c.ct.raceUnit,thief:!!c.ct.thief,sabo:!!c.ct.sabo,color:c.ct.c,x:c.x,y:c.y,hp:c.hp,max:c.max,fly:!!c.fly,camo:!!c.camo,armor:!!c.armor,boss:!!c.ct.boss,heal:!!c.ct.heal,slow:c.slow>0,dot:c.dotT>0,hitT:c.hitT||-9})),
   proj:p.proj.map(r=>({x:r.x,y:r.y,type:r.type,color:r.c,ox:r.ox,oy:r.oy,tx:r.tg?r.tg.x:r.tx,ty:r.tg?r.tg.y:r.ty})),
@@ -443,6 +452,7 @@ function getSnapshot(G){return{t:G.t,over:G.over,tick:G.tick,cols:COLS,rows:ROWS
 // Befehle eines Spielers (UI/3D/KI): {op:'build'|'upgrade'|'sell'|'send'|'target'|'collect'|'worker'|'mineUp'|'masterUp'|'pickMaster'|'placeMaster', ...}
 function command(G,pi,c){const p=G.p[pi],T=c.id!=null?p.towers.find(t=>t.id===c.id):null;
  switch(c.op){case'sendTo':return false;case'build':return !!build(p,c.type,c.x,c.y);case'placeMaster':return !!placeMaster(p,c.x,c.y);case'pickMaster':return pickMaster(p,c.key);
-  case'upgrade':return !!T&&upgrade(p,T,c.path);case'sell':if(!T||T.master)return false;sell(p,T);return true;case'target':if(!T||!TGT.includes(c.mode))return false;T.tgt=c.mode;return true;
-  case'send':return sendCreep(G,pi,c.creep);case'collect':return collect(p);case'worker':return buyWorker(p);case'mineUp':return mineUp(p);case'pickRace':return pickRace(p,c.race);case'heroMove':return heroMove(p,c.x,c.y);case'heroAbility':return heroAbility(G,pi,c.i);case'buildMany':return buildMany(p,c.type,c.cells);case'buyRune':return buyRune(p,c.e);case'dropRune':return dropRune(p,c.e);case'slotRune':return slotRune(p,T,c.e);case'masterUp':return mUp(p);}return false;}
-if(typeof module!=='undefined')module.exports={PLAYABLE,sendTarget,aiHero,raceMix,RACE,raceTowers,ABIL,SPECIAL,pickRace,heroAbility,heroMove,heroXpNeed,heroStats,ctAvail,sendCd,planBuild,buildMany,aiPlaceDmg,pathCoverage,ELEM,COMBO,RUNE_COST,RUNE_MAX,dropRune,activeEls,FUSE_COST,LVL_COST,buyRune,slotRune,canSlot,elemDef,comboKey,typeCount,getSnapshot,command,tracePath,EVT,evOn,MINE,buyWorker,mineUp,collect,workerCost,creepCost,ECO,incGain,defEval,aiThink,newGame,step,build,canPlace,sell,upgrade,canUp,tStats,sendCreep,pickMaster,placeMaster,mUp,bfs,pickTarget,dmgMul,COLS,ROWS,SPAWN,TT,CT};
+  case'upgrade':return !!T&&lvUp(p,T);case'sell':if(!T||T.master)return false;sell(p,T);return true;case'target':if(!T||!TGT.includes(c.mode))return false;T.tgt=c.mode;return true;
+  case'send':return sendCreep(G,pi,c.creep);case'collect':return collect(p);case'worker':return buyWorker(p);case'mineUp':return mineUp(p);case'pickRace':return pickRace(p,c.race);case'heroMove':return heroMove(p,c.x,c.y);case'heroAbility':return heroAbility(G,pi,c.i);case'buildMany':return buildMany(p,c.type,c.cells);case'buyRune':return buyRune(p,c.e);case'dropRune':return false;// v27: Elemente sind endgültig
+case'slotRune':return slotRune(p,T,c.e);case'masterUp':return mUp(p);}return false;}
+if(typeof module!=='undefined')module.exports={incSat,canLv,lvCost,lvUp,LV_MAX,sellVal,PLAYABLE,sendTarget,aiHero,raceMix,RACE,raceTowers,ABIL,SPECIAL,pickRace,heroAbility,heroMove,heroXpNeed,heroStats,ctAvail,sendCd,planBuild,buildMany,aiPlaceDmg,pathCoverage,ELEM,COMBO,RUNE_COST,RUNE_MAX,dropRune,activeEls,FUSE_COST,LVL_COST,buyRune,slotRune,canSlot,elemDef,comboKey,typeCount,getSnapshot,command,tracePath,EVT,evOn,MINE,buyWorker,mineUp,collect,workerCost,creepCost,ECO,incGain,defEval,aiThink,newGame,step,build,canPlace,sell,upgrade,canUp,tStats,sendCreep,pickMaster,placeMaster,mUp,bfs,pickTarget,dmgMul,COLS,ROWS,SPAWN,TT,CT};

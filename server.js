@@ -29,7 +29,7 @@ function validate(G,pi,c){const p=G.p[pi];if(!c||typeof c!=='object'||typeof c.o
    for(const q of c.cells)if(!Array.isArray(q)||!isInt(q[0],0,g.COLS-1)||!isInt(q[1],0,g.ROWS-1))return'bad_cell';return null;
   case'placeMaster':return isInt(c.x,0,g.COLS-1)&&isInt(c.y,0,g.ROWS-1)?null:'bad_cell';
   case'pickMaster':return typeof c.key==='string'&&['blitzmeister','frostmeister','goldmeister'].includes(c.key)?null:'bad_key';
-  case'upgrade':if(!tower())return'bad_tower';if(c.path!==0&&c.path!==1)return'bad_path';{const t=p.towers.find(t=>t.id===c.id);if(!g.canUp(t,c.path))return'max_level';}return null;
+  case'upgrade':if(!tower())return'bad_tower';{const t=p.towers.find(t=>t.id===c.id);if(!g.canLv(t))return'max_level';}return null;
   case'sell':case'target':case'slotRune':if(!tower())return'bad_tower';if(c.op==='slotRune'&&!ELEMS.has(c.e))return'bad_elem';return null;
   case'send':if(!CTIDS.has(c.creep))return'bad_creep';{const ct=g.CT.find(x=>x.id===c.creep);if(G.t<ct.unlock)return'locked';if(!g.ctAvail(p,ct))return'wrong_race';if(g.sendCd(G,p,ct)>0)return'cooldown';if(p.gold<g.creepCost(G,ct))return'no_gold';}return null;
   case'sendTo':return'no_target_choice';
