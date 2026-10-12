@@ -290,9 +290,9 @@ function fire(G,pi,p,t,dt){const ctr={x:t.x+.5,y:t.y+.5};t.cd-=dt;if(t.cd>0)retu
  if(TT[t.type].wall||TT[t.type]?.b?.noAtk||(t.offT||0)>G.t)return;const s=tStats(t),tg=pickTarget(p,t,s,ctr);if(!tg)return;t.cd=s.rate;G.ev.push({k:'shot',ty:t.type,pi});t.ang=Math.atan2(tg.y-ctr.y,tg.x-ctr.x);
  const isEl=t.type==='element'||!!TT[t.type].gen;
  if(t.type==='blitz'||isEl&&s.chain){let prev=ctr,hit=[tg],cur=tg;for(let i=1;i<s.chain;i++){const n=p.creeps.find(c=>c.hp>0&&!hit.includes(c)&&canSee(s,c)&&cdist(c,cur)<2.3);if(!n)break;hit.push(n);cur=n;}
-  hit.forEach((c,i)=>{if(isEl)applyHit(G,pi,p,{...s,dmg:s.dmg*Math.pow(.8,i)},c);else hurt(G,pi,c,s.dmg*Math.pow(.85,i),'magic',s.ap);G.fx.push({k:'bolt',pi,a:prev,b:{x:c.x,y:c.y},t:.15,c:s.el?s.el.c:TT[t.type].c,w:2});prev=c;});return;}
- if(isEl&&s.multi>1){const more=p.creeps.filter(c=>c!==tg&&c.hp>0&&canSee(s,c)&&cdist(c,ctr)<=s.rng).slice(0,s.multi-1);for(const c of more)p.proj.push({x:ctr.x,y:ctr.y,tg:c,tx:c.x,ty:c.y,s,c:s.el?s.el.c:TT[t.type].c,type:t.type});}
- p.proj.push({x:ctr.x,y:ctr.y,tg,tx:tg.x,ty:tg.y,s,c:s.el?s.el.c:TT[t.type].c,type:t.type});}
+  hit.forEach((c,i)=>{if(isEl)applyHit(G,pi,p,{...s,dmg:s.dmg*Math.pow(.8,i)},c);else hurt(G,pi,c,s.dmg*Math.pow(.85,i),'magic',s.ap);G.fx.push({k:'bolt',pi,a:prev,b:{x:c.x,y:c.y},t:.15,c:s.el?s.el.c:TT[t.type].c,w:2,ty:t.type});prev=c;});return;}
+ if(isEl&&s.multi>1){const more=p.creeps.filter(c=>c!==tg&&c.hp>0&&canSee(s,c)&&cdist(c,ctr)<=s.rng).slice(0,s.multi-1);for(const c of more)p.proj.push({x:ctr.x,y:ctr.y,ox:ctr.x,oy:ctr.y,tg:c,tx:c.x,ty:c.y,s,c:s.el?s.el.c:TT[t.type].c,type:t.type});}
+ p.proj.push({x:ctr.x,y:ctr.y,ox:ctr.x,oy:ctr.y,tg,tx:tg.x,ty:tg.y,s,c:s.el?s.el.c:TT[t.type].c,type:t.type});}
 function stepProj(G,pi,p,dt){for(let i=p.proj.length-1;i>=0;i--){const pr=p.proj[i],alive=pr.tg.hp>0&&p.creeps.includes(pr.tg);
  if(alive){pr.tx=pr.tg.x;pr.ty=pr.tg.y;}const dx=pr.tx-pr.x,dy=pr.ty-pr.y,l=Math.hypot(dx,dy),m=pr.s.spd*dt;
  if(l>m){pr.x+=dx/l*m;pr.y+=dy/l*m;continue;}
@@ -437,7 +437,7 @@ function getSnapshot(G){return{t:G.t,over:G.over,tick:G.tick,cols:COLS,rows:ROWS
   towers:p.towers.map(t=>({id:t.id,type:t.type,vis:TT[t.type]?.vis||t.type,col:TT[t.type]?.race?RACE[TT[t.type].race].c2:null,race:TT[t.type]?.race||null,off:(t.offT||0)>G.t,x:t.x,y:t.y,up:[...t.up],lv:t.up[0]+t.up[1],master:t.master,ang:t.ang,born:t.born,upT:t.upT,tgt:t.tgt,wall:!!TT[t.type]?.wall,
    rng:t.master?(p.master==='blitzmeister'?mStats('blitzmeister',p.mLvl).rng:.5):tStats(t).rng,el:t.type==='element'&&elemDef(t)?(d=>({n:d.n,ico:d.ico,c:d.c,lv:d.lv,base:!!d.base,runes:t.el.map(r=>r.e)}))(elemDef(t)):null,buff:!!t.buff,camo:!t.master&&!TT[t.type]?.wall&&!!tStats(t).camo})),
   creeps:p.creeps.map(c=>({id:c.id,type:c.ct.id,raceUnit:!!c.ct.raceUnit,thief:!!c.ct.thief,sabo:!!c.ct.sabo,color:c.ct.c,x:c.x,y:c.y,hp:c.hp,max:c.max,fly:!!c.fly,camo:!!c.camo,armor:!!c.armor,boss:!!c.ct.boss,heal:!!c.ct.heal,slow:c.slow>0,dot:c.dotT>0,hitT:c.hitT||-9})),
-  proj:p.proj.map(r=>({x:r.x,y:r.y,type:r.type,color:r.c})),
+  proj:p.proj.map(r=>({x:r.x,y:r.y,type:r.type,color:r.c,ox:r.ox,oy:r.oy,tx:r.tg?r.tg.x:r.tx,ty:r.tg?r.tg.y:r.ty})),
   fx:G.fx.filter(f=>f.pi===pi)}))};}
 // Befehle eines Spielers (UI/3D/KI): {op:'build'|'upgrade'|'sell'|'send'|'target'|'collect'|'worker'|'mineUp'|'masterUp'|'pickMaster'|'placeMaster', ...}
 function command(G,pi,c){const p=G.p[pi],T=c.id!=null?p.towers.find(t=>t.id===c.id):null;
