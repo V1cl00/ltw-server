@@ -61,7 +61,7 @@ const RACE={
    e_dryade:{n:'Dryadenhain',ico:'🍃',cost:30,vis:'frost',role:'AA',d:'+100 % vs. Luft, 30 % Slow',b:{dmg:36,rng:3.2,rate:1.3,dt:'magic',spd:13,airMul:1,slow:.3,slowDur:1.5}}},
   unit:{id:'wandler',n:'Gestaltwandler',c:'#4FE3D0',cost:85,inc:10,hp:650,sp:1.3,unlock:200,morph:1,L:2,cd:30},
   hero:{n:'Pip',c:'#CFE3FF',ab:['sternenregen','mondlicht']}},
- zwerge:{mark:'gear',n:'Hüter',c:'#5DBB4A',c2:'#FFE9F0',acc:'#8A6A3A',d:'Rette die Ängste! Viel Gold und starke Bremsen. Jede Angst wird zu Licht und wächst im Garten.',xform:1,
+ zwerge:{mark:'gear',n:'Hüter',locked:1,c:'#5DBB4A',c2:'#FFE9F0',acc:'#8A6A3A',d:'Rette die Ängste! Viel Gold und starke Bremsen. Jede Angst wird zu Licht und wächst im Garten.',xform:1,
   t:{z_gewehr:{n:'Dornenschleuder',ico:'🌰',cost:11,vis:'pfeil',role:'DMG',d:'Samen sprengen harte Hüllen auf',b:{dmg:8,rng:2.8,rate:.85,dt:'phys',spd:16,ap:1}},
    z_moerser:{n:'Sonnensaat-Mörser',ico:'🌻',cost:20,vis:'kanone',role:'DMG',d:'Sonnensaat trifft 2 Felder',b:{dmg:18,rng:3,rate:1.9,dt:'phys',spd:6,splash:1.3,ground:1}},
    z_flak:{n:'Lichtstaub-Schleier',ico:'🌼',cost:26,vis:'kanone',role:'AA',d:'Nur Flieger, 4 auf einmal',b:{dmg:9,rng:3.2,rate:.6,dt:'phys',spd:16,airOnly:1,multi:4}},
@@ -244,7 +244,7 @@ function mineUp(p){const m=p.mine;if(m.lvl>=2)return false;const c=MINE[m.lvl+1]
 function collect(p){return 0;}// veraltet: Gold kommt automatisch per Lieferung
 function stepMine(G,p,dt){const m=p.mine,L=MINE[m.lvl],pi=G.p.indexOf(p);m.ph=m.ph||[];while(m.ph.length<m.w)m.ph.push(-m.ph.length/Math.max(1,m.w)*.5);// gestaffelt
  for(let i=0;i<m.w;i++){const a=m.ph[i];m.ph[i]+=dt/L.trip;if(a<.5&&m.ph[i]>=.5){const g=Math.max(1,Math.round(L.y*L.trip*(evOn(G,'goldrausch')?2:1)));p.gold+=g;G.ev.push({k:'minegold',pi,g});}if(m.ph[i]>=1)m.ph[i]-=1;}}
-function sendTarget(G,from){const N=G.p.length,p=G.p[from],t=p.sendTo;if(Number.isInteger(t)&&t!==from&&G.p[t]&&!G.p[t].dead)return t;for(let k=1;k<N;k++){const i=(from+k)%N;if(!G.p[i].dead)return i;}return(from+1)%N;}
+function sendTarget(G,from){const N=G.p.length;for(let k=1;k<N;k++){const i=(from+k)%N;if(!G.p[i].dead)return i;}return(from+1)%N;}
 function sendCreep(G,from,id){const ct=CT.find(c=>c.id===id)||CT[0],p=G.p[from],o=G.p[sendTarget(G,from)];const cost=creepCost(G,ct);if(!ct||p.gold<cost||G.t<ct.unlock||!ctAvail(p,ct)||sendCd(G,p,ct)>0)return false;if(ct.cd)(p.sendCd=p.sendCd||{})[ct.id]=G.t+ct.cd;
  p.gold-=cost;const ig=incGain(p,ct);p.income+=ig;p.lastInc=ig;const sc=ECO.hpMul*(1+p.income/ECO.incHp)*(1+Math.pow(Math.max(0,G.t-ECO.sdStart)/ECO.sdLen,2))*(evOn(G,'blutmond')?1.25:1);
  (o.inLog=o.inLog||[]).push([G.t,ct.hp*sc]);(p.sendLog=p.sendLog||[]).push([G.t,ct.cost]);o.creeps.push({id:(G.cid=(G.cid||0)+1),ct,owner:from,bounty:ig,x:SPAWN.x+.5+(Math.random()-.5)*.3,y:.5,hp:ct.hp*sc,max:ct.hp*sc,fly:ct.fly,camo:ct.camo,armor:ct.armor,slow:0,slowT:0,dot:0,dotT:0,dotAp:0});return ig;}
@@ -442,7 +442,7 @@ function getSnapshot(G){return{t:G.t,over:G.over,tick:G.tick,cols:COLS,rows:ROWS
   fx:G.fx.filter(f=>f.pi===pi)}))};}
 // Befehle eines Spielers (UI/3D/KI): {op:'build'|'upgrade'|'sell'|'send'|'target'|'collect'|'worker'|'mineUp'|'masterUp'|'pickMaster'|'placeMaster', ...}
 function command(G,pi,c){const p=G.p[pi],T=c.id!=null?p.towers.find(t=>t.id===c.id):null;
- switch(c.op){case'sendTo':if(c.to===null||Number.isInteger(c.to)&&c.to!==pi&&c.to>=0&&c.to<G.p.length){p.sendTo=c.to;return true;}return false;case'build':return !!build(p,c.type,c.x,c.y);case'placeMaster':return !!placeMaster(p,c.x,c.y);case'pickMaster':return pickMaster(p,c.key);
+ switch(c.op){case'sendTo':return false;case'build':return !!build(p,c.type,c.x,c.y);case'placeMaster':return !!placeMaster(p,c.x,c.y);case'pickMaster':return pickMaster(p,c.key);
   case'upgrade':return !!T&&upgrade(p,T,c.path);case'sell':if(!T||T.master)return false;sell(p,T);return true;case'target':if(!T||!TGT.includes(c.mode))return false;T.tgt=c.mode;return true;
   case'send':return sendCreep(G,pi,c.creep);case'collect':return collect(p);case'worker':return buyWorker(p);case'mineUp':return mineUp(p);case'pickRace':return pickRace(p,c.race);case'heroMove':return heroMove(p,c.x,c.y);case'heroAbility':return heroAbility(G,pi,c.i);case'buildMany':return buildMany(p,c.type,c.cells);case'buyRune':return buyRune(p,c.e);case'dropRune':return dropRune(p,c.e);case'slotRune':return slotRune(p,T,c.e);case'masterUp':return mUp(p);}return false;}
 if(typeof module!=='undefined')module.exports={PLAYABLE,sendTarget,aiHero,raceMix,RACE,raceTowers,ABIL,SPECIAL,pickRace,heroAbility,heroMove,heroXpNeed,heroStats,ctAvail,sendCd,planBuild,buildMany,aiPlaceDmg,pathCoverage,ELEM,COMBO,RUNE_COST,RUNE_MAX,dropRune,activeEls,FUSE_COST,LVL_COST,buyRune,slotRune,canSlot,elemDef,comboKey,typeCount,getSnapshot,command,tracePath,EVT,evOn,MINE,buyWorker,mineUp,collect,workerCost,creepCost,ECO,incGain,defEval,aiThink,newGame,step,build,canPlace,sell,upgrade,canUp,tStats,sendCreep,pickMaster,placeMaster,mUp,bfs,pickTarget,dmgMul,COLS,ROWS,SPAWN,TT,CT};

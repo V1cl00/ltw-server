@@ -32,7 +32,7 @@ function validate(G,pi,c){const p=G.p[pi];if(!c||typeof c!=='object'||typeof c.o
   case'upgrade':if(!tower())return'bad_tower';if(c.path!==0&&c.path!==1)return'bad_path';{const t=p.towers.find(t=>t.id===c.id);if(!g.canUp(t,c.path))return'max_level';}return null;
   case'sell':case'target':case'slotRune':if(!tower())return'bad_tower';if(c.op==='slotRune'&&!ELEMS.has(c.e))return'bad_elem';return null;
   case'send':if(!CTIDS.has(c.creep))return'bad_creep';{const ct=g.CT.find(x=>x.id===c.creep);if(G.t<ct.unlock)return'locked';if(!g.ctAvail(p,ct))return'wrong_race';if(g.sendCd(G,p,ct)>0)return'cooldown';if(p.gold<g.creepCost(G,ct))return'no_gold';}return null;
-  case'sendTo':return c.to===null||isInt(c.to,0,G.p.length-1)&&c.to!==pi&&!G.p[c.to].dead?null:'bad_target';
+  case'sendTo':return'no_target_choice';
   case'worker':case'mineUp':case'masterUp':return null;
   case'heroMove':return isInt(c.x,0,g.COLS-1)&&isInt(c.y,0,g.ROWS-1)?null:'bad_cell';
   case'heroAbility':if(c.i!==0&&c.i!==1)return'bad_ability';if(!p.hero)return'no_hero';if(p.hero.cd[c.i]>G.t)return'cooldown';return null;

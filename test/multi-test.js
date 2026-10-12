@@ -17,10 +17,10 @@ function client(name,token){return new Promise(res=>{const ws=new WebSocket(URL)
  const E=await client('E');E.send({t:'join',code:room.code});ok((await E.wait(m=>m.t==='error')).msg==='room_full','5th rejected');
  C.forEach((c,i)=>c.send({t:'race',race:['menschen','orks','menschen','orks'][i]}));await Promise.all(C.map(c=>c.wait(m=>m.t==='phase')));
  await sleep(400);const s0=C[0].state;ok(s0.n===4&&s0.others.length===4&&s0.p.length===4&&s0.tgt===1,'state: n=4, others=4, 4 lanes, target=next (1)');
- ok(C[1].state.tgt===2&&C[3].state.tgt===0,'targets ring: B->C, D->A');
- let r=await C[0].cmd({op:'sendTo',to:3});ok(r.ok,'A sendTo D ok');r=await C[0].cmd({op:'sendTo',to:0});ok(!r.ok,'sendTo self rejected');
+ await sleep(600);ok(C[1].state.tgt===2&&C[3].state.tgt===0,'targets ring: B->C, D->A');
+ let r=await C[0].cmd({op:'sendTo',to:3});ok(!r.ok,'sendTo rejected (auto target only)');r=await C[0].cmd({op:'sendTo',to:0});ok(!r.ok,'sendTo self rejected');
  await sleep(1500);r=await C[0].cmd({op:'send',creep:'laeufer'});ok(r.ok,'A sends unit');await sleep(300);
- ok(C[3].state.p[0].creeps.some(c=>c.owner!==0),'unit arrived on D lane');ok(C[0].state.p[1].ri===3,'A watches D (target) as lane 1');
+ ok(C[1].state.p[0].creeps.some(c=>c.owner!==0),'unit arrived on B lane (next player)');ok(C[0].state.p[1].ri===1,'A sees target B as lane 1');
  C[0].send({t:'watch',pi:2});await sleep(400);ok(C[0].state.p[1].ri===2&&C[0].state.watch===2,'watch C -> lane 1 shows C');
  r=await C[0].cmd({op:'build',type:'pfeil',x:3,y:3});ok(r.ok&&C[0].state.p[0].ri===0,'build on own island only (lane 0 = self)');
  console.log('== Reconnect (C)');
