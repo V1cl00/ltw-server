@@ -61,7 +61,7 @@ function tickRoom(r){const G=r.G;if(!G||r.phase==='over')return;const now=Date.n
   r.evBuf.push(...G.ev.filter(e=>e.k!=='shot'||r.evBuf.length<60));G.ev.length=0;}
  if(now-r.lastSnap>=SNAP_MS){r.lastSnap=now;snapshot(r);}
  if(G.over)endMatch(r,G.winner,r.size===2?'lives':'last_standing');}
-function snapshot(r){const ev=r.evBuf;r.evBuf=[];const nm=names(r);r.players.forEach((s,pi)=>{if(s&&!r.dc[pi]){const st=NET.serState(r.G,pi,nm,s.watch);send(s,{t:'state',s:st,ev:NET.flipEv(ev,pi,st.watch)});}});}
+function snapshot(r){const ev=r.evBuf;r.evBuf=[];const nm=names(r);r.players.forEach((s,pi)=>{if(s&&!r.dc[pi]){const st=NET.serState(r.G,pi,nm,s.watch);send(s,{t:'state',s:st,ev:NET.flipEv(ev,pi,st.watch,st.n)});}});}
 function broadcast(r,m){r.players.forEach(s=>send(s,m));}
 function resumeRoom(r){r.pause=null;r.resumeAt=Date.now()+3000;broadcast(r,{t:'resume',in:3});}
 function endMatch(r,winner,reason){if(r.phase==='over')return;if(r.G){r.G.winner=winner;r.G.over=winner===0?'win':'lose';}clearInterval(r.timer);r.timer=null;if(r.G)snapshot(r);r.phase='over';
