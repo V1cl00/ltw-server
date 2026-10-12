@@ -53,8 +53,9 @@ function eliminate(r,pi,reason){const p=r.G.p[pi];if(p.dead)return;p.lives=0;p.d
 function checkEnd(r){const al=alivePi(r);if(al.length<=1)endMatch(r,al.length?al[0]:-1,r.size===2?r._why||'lives':'last_standing');}
 function tickRoom(r){const G=r.G;if(!G||r.phase==='over')return;const now=Date.now();
  for(let pi=0;pi<r.size;pi++)if(r.dc[pi]&&now>r.dc[pi]){r.dc[pi]=null;if(r.size===2){endMatch(r,1-pi,'forfeit_disconnect');return;}eliminate(r,pi,'forfeit_disconnect');if(r.phase==='over')return;}
- if(r.phase==='pick'){const races=Object.keys(g.RACE);if(now>=r.pickEnd||G.p.every(p=>p.race)){G.p.forEach(p=>{if(!p.race)g.pickRace(p,races[crypto.randomInt(races.length)]);});r.phase='play';broadcast(r,{t:'phase',phase:'play'});}else return;}
+ if(r.phase==='pick'){const races=Object.keys(g.RACE).filter(k=>!g.RACE[k].locked);if(now>=r.pickEnd||G.p.every(p=>p.race)){G.p.forEach(p=>{if(!p.race)g.pickRace(p,races[crypto.randomInt(races.length)]);});r.phase='play';r.tutEnd=now+5000;r.tutUsed=Array(r.size).fill(0);r.pause=null;r.resumeAt=0;broadcast(r,{t:'phase',phase:'play'});broadcast(r,{t:'tutOffer',left:5});}else return;}
  if(r.dc.some((d,i)=>d&&!G.p[i].dead))return;// pausiert während Verbindungsabbruch
+ if(r.pause){if(now<r.pause.until)return;resumeRoom(r);}if(r.resumeAt&&now<r.resumeAt)return;
  for(let i=0;i<SIM_SPEED&&!G.over;i++)g.step(G,SIM_DT);
  if(G.ev.length){for(const e of G.ev)if(e.k==='elim'&&!r.elim.has(e.pi)){r.elim.add(e.pi);send(r.players[e.pi],{t:'eliminated',place:G.p[e.pi].place,reason:'lives'});broadcast(r,{t:'playerOut',pi:e.pi,name:r.players[e.pi]?.name,place:G.p[e.pi].place,reason:'lives'});}
   r.evBuf.push(...G.ev.filter(e=>e.k!=='shot'||r.evBuf.length<60));G.ev.length=0;}
@@ -62,11 +63,12 @@ function tickRoom(r){const G=r.G;if(!G||r.phase==='over')return;const now=Date.n
  if(G.over)endMatch(r,G.winner,r.size===2?'lives':'last_standing');}
 function snapshot(r){const ev=r.evBuf;r.evBuf=[];const nm=names(r);r.players.forEach((s,pi)=>{if(s&&!r.dc[pi]){const st=NET.serState(r.G,pi,nm,s.watch);send(s,{t:'state',s:st,ev:NET.flipEv(ev,pi,st.watch)});}});}
 function broadcast(r,m){r.players.forEach(s=>send(s,m));}
+function resumeRoom(r){r.pause=null;r.resumeAt=Date.now()+3000;broadcast(r,{t:'resume',in:3});}
 function endMatch(r,winner,reason){if(r.phase==='over')return;if(r.G){r.G.winner=winner;r.G.over=winner===0?'win':'lose';}clearInterval(r.timer);r.timer=null;if(r.G)snapshot(r);r.phase='over';
  r.players.forEach((s,pi)=>send(s,{t:'over',result:pi===winner?'win':'lose',reason,winner,winnerName:r.players[winner]?.name||'',place:pi===winner?1:(r.G?.p[pi]?.place||2),size:r.size}));
  r.players.forEach((s,pi)=>{if(s&&r.dc[pi]!=null||s&&!s.ws){sessions.delete(s.token);s.room=null;r.players[pi]=null;}});r.dc=Array(r.size).fill(null);
  if(r.players.every(x=>!x))rooms.delete(r.code);}
-function leaveRoom(s,reason){const r=s.room;if(!r)return;const pi=r.players.indexOf(s);s.room=null;
+function leaveRoom(s,reason){const r=s.room;if(!r)return;const pi=r.players.indexOf(s);s.room=null;if(r.pause&&r.pause.pi===pi)resumeRoom(r);
  if(pi<0)return;if(r.phase==='pick'||r.phase==='play'){if(r.size===2)endMatch(r,1-pi,reason||'forfeit_left');else if(!r.G.p[pi].dead)eliminate(r,pi,reason||'forfeit_left');}
  r.players[pi]=null;broadcast(r,{t:'oppLeft',pi,name:s.name});if(r.phase==='lobby')lobbyInfo(r);
  if(r.players.every(x=>!x)){clearInterval(r.timer);rooms.delete(r.code);}}
@@ -103,8 +105,10 @@ wss.on('connection',ws=>{let s=null;ws.isAlive=true;ws.on('pong',()=>ws.isAlive=
     if(r&&r!==nr)leaveRoom(s);deq(s);nr.players[nr.players.indexOf(null)]=s;s.room=nr;send(s,{t:'room',code:nr.code,size:nr.size});lobbyInfo(nr);if(nr.players.every(Boolean))startMatch(nr);return;}
    case'leave':deq(s);leaveRoom(s,'forfeit_left');return send(s,{t:'left'});
    case'race':{if(!r||r.phase!=='pick')return send(s,{t:'error',msg:'not_pick_phase'});const pi=r.players.indexOf(s);
-    if(typeof m.race!=='string'||!Object.prototype.hasOwnProperty.call(g.RACE,m.race))return send(s,{t:'error',msg:'bad_race'});if(r.G.p[pi].race)return send(s,{t:'error',msg:'race_locked'});g.pickRace(r.G.p[pi],m.race);return send(s,{t:'raceOk',race:m.race});}
-   case'cmd':{if(!r||r.phase!=='play'||r.dc.some((d,i)=>d&&!r.G.p[i].dead)||r.G.p[r.players.indexOf(s)]?.dead)return send(s,{t:'ack',seq:m.seq,ok:false,err:'not_playing'});const pi=r.players.indexOf(s);
+    if(typeof m.race!=='string'||!Object.prototype.hasOwnProperty.call(g.RACE,m.race)||g.RACE[m.race].locked)return send(s,{t:'error',msg:'bad_race'});if(r.G.p[pi].race)return send(s,{t:'error',msg:'race_locked'});g.pickRace(r.G.p[pi],m.race);return send(s,{t:'raceOk',race:m.race});}
+   case'tutStart':{if(!r||r.phase!=='play')return send(s,{t:'error',msg:'not_playing'});const pi=r.players.indexOf(s);if(pi<0||r.tutUsed[pi]||r.pause||Date.now()>r.tutEnd+1000)return send(s,{t:'error',msg:'tut_denied'});r.tutUsed[pi]=1;r.pause={pi,until:Date.now()+60000};return broadcast(r,{t:'pause',pi,name:s.name,max:60});}
+   case'tutDone':{if(!r||!r.pause||r.players.indexOf(s)!==r.pause.pi)return;return resumeRoom(r);}
+   case'cmd':{if(!r||r.phase!=='play'||r.pause||Date.now()<r.resumeAt||r.dc.some((d,i)=>d&&!r.G.p[i].dead)||r.G.p[r.players.indexOf(s)]?.dead)return send(s,{t:'ack',seq:m.seq,ok:false,err:'not_playing'});const pi=r.players.indexOf(s);
     let err=validate(r.G,pi,m.c),res=false;if(!err){try{res=g.command(r.G,pi,m.c);}catch(e){err='server_error';}if(!err&&!res)err='rejected';}
     if(err)s.viol+=.2;return send(s,{t:'ack',seq:m.seq,ok:!err,err:err||undefined,op:m.c&&m.c.op});}
    case'rematch':{if(!r||r.phase!=='over'||!r.players.every(Boolean))return send(s,{t:'error',msg:'no_rematch'});const pi=r.players.indexOf(s);r.rematch[pi]=1;
