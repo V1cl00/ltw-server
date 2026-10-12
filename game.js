@@ -106,7 +106,7 @@ const ABIL={
  mondlicht:{n:'Mondlicht',ico:'🌙',cd:40,d:'Türme: Tarnsicht & +1 Reichweite (8 s)'},
  sturmhammer:{n:'Rankengriff',ico:'🌿',cd:20,d:'Die stärkste Angst wird 3 s festgehalten'}};
 const heroXpNeed=l=>Math.round(25*Math.pow(l,1.5));
-function heroStats(h){const l=h.lvl;return{dmg:12+6*l,rng:2.4+l*.08,rate:Math.max(.45,.9-l*.04),sp:2.2};}
+function heroStats(h){const l=h.lvl;return{dmg:4+1.6*l,rng:1.8+l*.03,rate:Math.max(.9,1.25-l*.035),sp:2.2};}
 function mkHero(p){const R=RACE[p.race];if(!R)return null;return{n:R.hero.n,c:R.hero.c,ab:R.hero.ab,x:5.5,y:15.5,tx:5.5,ty:15.5,lvl:1,xp:0,cd:[0,0],atk:0,ang:0,buffT:0};}
 function heroMove(p,x,y){if(!p.hero||x<0||y<0||x>=COLS||y>=ROWS)return false;p.hero.tx=x+.5;p.hero.ty=y+.5;return true;}
 function heroAbility(G,pi,i){const p=G.p[pi],h=p.hero;if(!h||h.cd[i]>G.t)return false;const k=h.ab[i],A=ABIL[k],l=h.lvl,cr=p.creeps.filter(c=>c.hp>0);
@@ -115,7 +115,7 @@ function heroAbility(G,pi,i){const p=G.p[pi],h=p.hero;if(!h||h.cd[i]>G.t)return 
  else if(k==='goldregen'){const g=25+12*l;p.gold+=g;G.ev.push({k:'minegold',pi,g});G.fx.push({k:'coin',pi,x:h.x,y:h.y-.5,t:1,txt:'+'+g});}
  else if(k==='kriegsschrei')p.rateBuffT=G.t+8;
  else if(k==='amboss'){p.anvilT=G.t+8;p.anvil={x:h.x,y:h.y};G.fx.push({k:'burst',pi,x:h.x,y:h.y,r:2.5,t:.6,c:'#F2B233'});}
- else if(k==='erdbeben'){if(!cr.length)return false;for(const c of cr){c.slow=Math.max(c.slow,.5);c.slowT=Math.max(c.slowT||0,4);}dmgAll(cr,15+8*l);G.fx.push({k:'pulse',pi,t:.6});}
+ else if(k==='erdbeben'){if(!cr.length)return false;for(const c of cr){c.slow=Math.max(c.slow,.5);c.slowT=Math.max(c.slowT||0,4);}dmgAll(cr,8+4*l);G.fx.push({k:'pulse',pi,t:.6});}
  else if(k==='frostnova'){const t=cr.filter(c=>cdist(c,h)<2.5);if(!t.length)return false;for(const c of t){if(c.ct.boss){c.slow=Math.max(c.slow,.5);c.slowT=2;}else c.frzT=2;}dmgAll(t,10+6*l);G.fx.push({k:'boom',pi,x:h.x,y:h.y,r:2.5,t:.5,c:'#9fe8ff'});}
  else if(k==='seelenernte'){if(!cr.length)return false;const g=cr.length*(3+l);p.gold+=g;G.ev.push({k:'minegold',pi,g});}
  else if(k==='sternenregen'){if(!cr.length)return false;dmgAll(cr,20+10*l);for(const c of cr.slice(0,12))G.fx.push({k:'bolt',pi,a:{x:c.x,y:c.y-3},b:{x:c.x,y:c.y},t:.3,c:'#CFE3FF',w:2});}
@@ -434,7 +434,7 @@ function getSnapshot(G){return{t:G.t,over:G.over,tick:G.tick,cols:COLS,rows:ROWS
  evt:G.evt&&G.et<G.evt.end?{k:G.evt.k,left:G.evt.end-G.et}:null,next:G.nextEvt?{k:G.nextEvt.k,in:G.nextEvt.at-G.et}:null,
  lanes:G.p.map((p,pi)=>({pi,race:p.race||null,hero:p.hero?{...p.hero,cd:p.hero.cd.map(c=>Math.max(0,c-G.t)),need:heroXpNeed(p.hero.lvl),rng:heroStats(p.hero).rng}:null,runes:{...(p.runes||{})},lives:p.lives,gold:p.gold,income:p.income,master:p.master,mLvl:p.mLvl,mode:p.mode,
   mine:{lvl:p.mine.lvl,w:p.mine.w,ph:(p.mine.ph||[]).slice(0,p.mine.w).map(v=>Math.max(0,v)),cap:MINE[p.mine.lvl].cap,per:Math.max(1,Math.round(MINE[p.mine.lvl].y*MINE[p.mine.lvl].trip)),gps:MINE[p.mine.lvl].y*p.mine.w},
-  path:tracePath(p),
+  path:(p._pd===p.dist&&p._pc)?p._pc:(p._pd=p.dist,p._pc=tracePath(p)),
   towers:p.towers.map(t=>({id:t.id,type:t.type,vis:TT[t.type]?.vis||t.type,col:TT[t.type]?.race?RACE[TT[t.type].race].c2:null,race:TT[t.type]?.race||null,off:(t.offT||0)>G.t,x:t.x,y:t.y,up:[...t.up],lv:t.up[0]+t.up[1],master:t.master,ang:t.ang,born:t.born,upT:t.upT,tgt:t.tgt,wall:!!TT[t.type]?.wall,
    rng:t.master?(p.master==='blitzmeister'?mStats('blitzmeister',p.mLvl).rng:.5):tStats(t).rng,el:t.type==='element'&&elemDef(t)?(d=>({n:d.n,ico:d.ico,c:d.c,lv:d.lv,base:!!d.base,runes:t.el.map(r=>r.e)}))(elemDef(t)):null,buff:!!t.buff,camo:!t.master&&!TT[t.type]?.wall&&!!tStats(t).camo})),
   creeps:p.creeps.map(c=>({id:c.id,type:c.ct.id,raceUnit:!!c.ct.raceUnit,thief:!!c.ct.thief,sabo:!!c.ct.sabo,color:c.ct.c,x:c.x,y:c.y,hp:c.hp,max:c.max,fly:!!c.fly,camo:!!c.camo,armor:!!c.armor,boss:!!c.ct.boss,heal:!!c.ct.heal,slow:c.slow>0,dot:c.dotT>0,hitT:c.hitT||-9})),
